@@ -1,0 +1,22 @@
+fn I32 main() {
+    print_first([ 1, 2, 3 ]) /* 1 */
+
+    const I32[5] arr = [ 1, 2, 3, 4, 5 ];
+    print_first(arr); /* implicit cast to slice */
+
+    I32[2] foo = [ 0, 0 ];
+    set_first(foo, 1);
+    set_first(foo[1..], 2);
+
+    println(foo[0], " ", foo[1]);
+
+    return 0;
+}
+
+fn print_first(I32 const[] slice) {
+    println(slice[0]);
+}
+
+fn set_first(I32[] slice, I32 value) {
+    slice[0] = value;
+}

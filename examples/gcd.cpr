@@ -1,0 +1,33 @@
+fn I32 main() {
+    I32 a, b;
+    if (!readln(&a) || !readln(&b) || a < 0 || b < 0) {
+        println("Invalid inputs");
+        return;
+    }
+
+    println("gcd=", gcd(a, b));
+}
+
+fn I32 gcd(I32 a, I32 b) {
+    if (a < b) {
+        I32 tmp = a;
+        a = b;
+        b = tmp;
+    }
+
+    if (a == 0) {
+        return -1;
+    }
+
+    if (b == 0) {
+        return a;
+    }
+
+    while (b != 0) {
+        I32 r = a % b;
+        a = b;
+        b = r;
+    }
+
+    return a;
+}

@@ -1,0 +1,9 @@
+fn I32 main() {
+   U8 narrow = 31;
+   I32 wide = narrow; /* Implicit wide casting */
+
+   /* Implicit narrow casts are prohibited. */
+   /* narrow = wide; */
+
+   narrow = (U8) wide;
+}

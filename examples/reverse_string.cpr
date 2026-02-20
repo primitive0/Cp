@@ -1,0 +1,16 @@
+fn Unit main() {
+    U8[] string;
+    if (!readln(&string)) {
+       os_exit(1);
+    }
+    defer mfree(string);
+
+    Usz n = len(string);
+    for (Usz i = 0; i < n / 2; ++i) {
+        U8 tmp = string[i];
+        string[i] = string[n - i];
+        string[n - i] = tmp;
+    }
+
+    println(string);
+}

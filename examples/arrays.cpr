@@ -1,0 +1,35 @@
+fn I32 main() {
+    static();
+    dynamic();
+    return 0;
+}
+
+fn Unit static() {
+    I32[3] array = [ 5, 2, 10 ];
+    println(array[0]);
+    println(array[1]);
+    println(array[2]);
+    /* println(array[3]); <-- Compile-time error! */
+
+    array[0] = 6;
+    println(array[0]); /* 6 */
+}
+
+fn Unit dynamic() {
+    Unit* ptr = malloc(sizeof I32 * 3);
+
+    /* Free memory at the end of the function */
+    defer mfree(ptr);
+
+    /* @ is a slice creation operator */
+    I32[] array = ((I32*) ptr) @ 3;
+
+    array[0] = 11;
+    array[1] = 12;
+    array[2] = 13;
+    /* array[3] = 14; <-- UB! */
+
+    println(array[1], " ", array[2], " ", array[3]);
+
+    /* ptr is freed here */
+}

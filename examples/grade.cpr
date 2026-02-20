@@ -1,0 +1,20 @@
+fn Unit main() {
+    I32 grade;
+    if (!readln(grade)) {
+       return;
+    }
+
+    if (grade == 1) {
+        println("Плохо");
+    } else if (grade == 2) {
+        println("Неудовлетворительно");
+    } else if (grade == 3) {
+        println("Удовлетворительно");
+    } else if (grade == 4) {
+        println("Хорошо");
+    } else if (grade == 5) {
+        println("Отлично");
+    } else {
+        println("Некорректная оценка");
+    }
+}

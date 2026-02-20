@@ -1,0 +1,31 @@
+fn I32 main() {
+    read();
+    write();
+    return 0;
+}
+
+fn Unit read() {
+    const I32 constant = 42;
+    I32 variable = 4;
+
+    I32 const* ptr = &constant;
+    println(*ptr); /* 42 */
+
+    /* Cannot change underlying value of read-only pointer */
+    /* *ptr = 43; */
+
+    ptr = &variable;
+    println(*ptr); /* 4 */
+
+    const I32 const* const_ptr = &constant;
+    /* const_ptr = &variable; <-- Compile-time error! */
+}
+
+fn Unit write() {
+    I32 variable = 1;
+    I32* ptr = &variable;
+
+    *ptr += 3;
+
+    println(variable); /* 4 */
+}
