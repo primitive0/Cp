@@ -6,8 +6,9 @@ C-подобным синтаксисом, ручным управлением �
 взаимодействия (FFI).
 
 ```c3
-fn Unit main() {
-    log.println("Hello, world!")
+fn I32 main() {
+    println("Hello, world!")
+    return 0;
 }
 ```
 
@@ -18,4 +19,3 @@ fn Unit main() {
 3. **Catch2**
 4. **CMake, Conan**
 5. **Lit и FileCheck**
-6. **org-mode**
