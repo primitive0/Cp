@@ -1,16 +1,21 @@
-fn Unit main() {
+fn I32 main() {
+    /* readln() will automatically allocate memory for string */
     U8[] string;
     if (!readln(&string)) {
-       os_exit(1);
+        return 1;
     }
-    defer mfree(string);
 
     Usz n = len(string);
     for (Usz i = 0; i < n / 2; ++i) {
         U8 tmp = string[i];
-        string[i] = string[n - i];
-        string[n - i] = tmp;
+        string[i] = string[n-1-i];
+        string[n-1-i] = tmp;
     }
 
     println(string);
+
+    /* Free string to avoid memory leaks */
+    free((U8*) string);
+
+    return 0;
 }

@@ -1,22 +1,20 @@
 fn I32 main() {
-    print_first([ 1, 2, 3 ]) /* 1 */
+    I32[5] array = [ 1, 2, 3, 4, 5 ];
 
-    const I32[5] arr = [ 1, 2, 3, 4, 5 ];
-    print_first(arr); /* implicit cast to slice */
+    /* Slice is a pointer to array + array size */
+    I32[] slice = array[:];
 
-    I32[2] foo = [ 0, 0 ];
-    set_first(foo, 1);
-    set_first(foo[1..], 2);
+    /* len() returns slice length */
+    println(len(slice)) /* 5 */
 
-    println(foo[0], " ", foo[1]);
+    /* Slice data can be changed */
+    slice[0] -= 1;
+    println(array[0]); /* 0 */
+
+    /* Mutable slice can be converted to read-only slice */
+    I32 const[] ro_slice = slice;
+
+    /* ro_slice[1] = 99; <-- Compile-time error! */
 
     return 0;
-}
-
-fn print_first(I32 const[] slice) {
-    println(slice[0]);
-}
-
-fn set_first(I32[] slice, I32 value) {
-    slice[0] = value;
 }

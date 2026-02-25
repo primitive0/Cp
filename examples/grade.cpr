@@ -1,7 +1,7 @@
-fn Unit main() {
+fn I32 main() {
     I32 grade;
-    if (!readln(grade)) {
-       return;
+    if (!read(&grade)) {
+        return 1;
     }
 
     if (grade == 1) {
@@ -17,4 +17,6 @@ fn Unit main() {
     } else {
         println("Некорректная оценка");
     }
+
+    return 0;
 }

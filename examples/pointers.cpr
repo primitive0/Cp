@@ -1,31 +1,41 @@
 fn I32 main() {
-    read();
-    write();
-    return 0;
-}
-
-fn Unit read() {
     const I32 constant = 42;
     I32 variable = 4;
 
-    I32 const* ptr = &constant;
-    println(*ptr); /* 42 */
+    /* &x is an address-of operator.
+       For constants &x returns read-only pointer,
+       for mutable values &x returns read-write pointer.
+    */
+    println(&constant); /* Address of constant */
+    println(&variable); /* Address of variable */
+
+    /* *&constant = 100 - 7; <-- Compile-time error! */
+
+    /* &(23) <-- Cannot take address of rvalue! */
+
+    /* T const* is a read-only pointer */
+    I32 const* ro_ptr = &constant;
+    println(*ro_ptr); /* 42 */
 
     /* Cannot change underlying value of read-only pointer */
-    /* *ptr = 43; */
+    /* *ro_ptr = 43; */
 
-    ptr = &variable;
-    println(*ptr); /* 4 */
+    ro_ptr = &variable;
+    println(*ro_ptr); /* 4 */
 
-    const I32 const* const_ptr = &constant;
-    /* const_ptr = &variable; <-- Compile-time error! */
-}
+    ++variable;
+    println(*ro_ptr); /* 5 */
 
-fn Unit write() {
-    I32 variable = 1;
+
+    /* T* is a read-write pointer */
     I32* ptr = &variable;
 
     *ptr += 3;
 
-    println(variable); /* 4 */
+    println(variable); /* 8 */
+
+    // TODO: pointer arith
+
+
+    return 0;
 }

@@ -2,7 +2,6 @@ fn I32 main() {
     println(sizeof Bool)    /* 1 */
     println(sizeof I32)     /* 4 */
     println(sizeof U8)      /* 1 */
-    println(sizeof Usz)     /* platform-dependent, on x86_64 is 8 */
     println(sizeof Unit)    /* 0 */
     println(sizeof Unit[5]) /* 0 */
     println(sizeof Unit[])  /* 2 * sizeof Usz */

@@ -1,0 +1,18 @@
+fn I32 main() {
+    I32 integer = 42;
+
+    U8 char1 = (U8) 42;
+    U8 char2 = 'f';
+
+    Bool bool1 = false;
+    Bool bool2 = true;
+
+    Unit* nullptr = null;
+
+    U8 const[] string = "C'";
+    U8 const[] escape_sequences = "\n\r\t\0";
+
+    I32[1] array = [ 42 ];
+
+    return 0;
+}

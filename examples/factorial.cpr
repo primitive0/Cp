@@ -1,6 +1,6 @@
 fn I32 main() {
     I32 n;
-    if (!readln(&n)) {
+    if (!read(&n)) {
         return 1;
     }
 
