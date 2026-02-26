@@ -7,12 +7,12 @@ fn I32 main() {
     Bool bool1 = false;
     Bool bool2 = true;
 
-    Unit* nullptr = null;
+    U8* null_pointer = null;
 
     U8 const[] string = "C'";
-    U8 const[] escape_sequences = "\n\r\t\0";
+    U8 const[] escape_sequences = "\n\r\0";
 
-    I32[1] array = [ 42 ];
+    I32[3] array = [ 42, 52, 62 ];
 
     return 0;
 }

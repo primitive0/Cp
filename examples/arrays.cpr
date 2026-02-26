@@ -1,16 +1,16 @@
 fn I32 main() {
     /* I32[3] is an array of 3 integers stored in-place */
-    I32[3] array = [ 5, 2, 10 ];
-    println(array[0]); /* 5 */
-    println(array[1]); /* 2 */
-    println(array[2]); /* 10 */
-    /* println(array[3]); <-- Compile-time error! */
+    I32[3] ints = [ 5, 2, 10 ];
+    println(ints[0]); /* 5 */
+    println(ints[1]); /* 2 */
+    println(ints[2]); /* 10 */
+    /* println(ints[3]); <-- Compile-time error! */
 
-    array[0] = 6;
-    println(array[0]); /* 6 */
+    ints[0] = 6;
+    println(ints[0]); /* 6 */
 
     /* Use len() to get array length */
-    println(len(array)) /* 3 */
+    println(len(ints)) /* 3 */
 
     return 0;
 }

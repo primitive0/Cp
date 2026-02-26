@@ -1,20 +1,24 @@
 fn I32 main() {
-    I32[5] array = [ 1, 2, 3, 4, 5 ];
+    I32[5] ints = [ 1, 2, 3, 4, 5 ];
 
     /* Slice is a pointer to array + array size */
-    I32[] slice = array[:];
+    I32[] slice = ints[:];
 
     /* len() returns slice length */
-    println(len(slice)) /* 5 */
+    println(len(slice)); /* 5 */
 
     /* Slice data can be changed */
     slice[0] -= 1;
-    println(array[0]); /* 0 */
+    println(ints[0]); /* 0 */
 
     /* Mutable slice can be converted to read-only slice */
     I32 const[] ro_slice = slice;
 
     /* ro_slice[1] = 99; <-- Compile-time error! */
+
+    /* Slicing operator [from:to] can be used to cut the slice */
+    I32[] cut_slice = slice[1:4]; /* [ 2, 3, 4 ] */
+    println(len(cut_slice)); /* 3 */
 
     return 0;
 }

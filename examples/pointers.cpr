@@ -34,8 +34,6 @@ fn I32 main() {
 
     println(variable); /* 8 */
 
-    // TODO: pointer arith
-
 
     return 0;
 }

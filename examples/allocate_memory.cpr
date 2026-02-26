@@ -1,19 +1,19 @@
 fn I32 main() {
-    /* alloc() returns Unit* */
-    Unit* ptr = alloc(sizeof I32 * 3);
+    /* alloc() returns U8* */
+    U8* data = alloc(sizeof I32 * 3);
 
     /* @ is a slice creation operator */
-    I32[] array = ((I32*) ptr) @ 3;
+    I32[] ints = ((I32*) data) @ 3;
 
-    array[0] = 11;
-    array[1] = 12;
-    array[2] = 13;
-    /* array[3] = 14; <-- UB! */
+    ints[0] = 11;
+    ints[1] = 12;
+    ints[2] = 13;
+    /* ints[3] = 14; <-- UB! */
 
-    println(array[1], " ", array[2], " ", array[3]);
+    println(ints[1], " ", ints[2], " ", ints[3]);
 
     /* Free memory to avoid leaks */
-    free(ptr);
+    free(data);
 
     return 0;
 }

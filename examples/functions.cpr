@@ -1,0 +1,26 @@
+fn I32 main() {
+    returns_no_value();
+
+    U8 const[] string = returns_string();
+
+    I32 result = dot_product(2, 3, 4, 5);
+
+    return 0;
+}
+
+fn Unit returns_no_value() {
+    return;
+}
+
+fn U8 const[] returns_string() {
+    return "This is string!";
+}
+
+/* Compiler does not do analysis of return paths and permits
+   non-unit return type functions that actually return no
+   value. */
+fn Bool invoke_ub() {}
+
+fn I32 dot_product(I32 x0, I32 y0, I32 x1, I32 y1) {
+    return x0 * x1 + y0 * y1;
+}

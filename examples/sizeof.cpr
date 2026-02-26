@@ -1,11 +1,12 @@
 fn I32 main() {
-    println(sizeof Bool)    /* 1 */
-    println(sizeof I32)     /* 4 */
-    println(sizeof U8)      /* 1 */
-    println(sizeof Unit)    /* 0 */
-    println(sizeof Unit[5]) /* 0 */
-    println(sizeof Unit[])  /* 2 * sizeof Usz */
-    println(sizeof Unit*)   /* sizeof Usz */
+    println(sizeof Bool);    /* 1 */
+    println(sizeof I32);     /* 4 */
+    println(sizeof U8);      /* 1 */
+
+    println(sizeof Bool[5]); /* 5 */
+
+    println(sizeof I32*);    /* Implementation-defined */
+    println(sizeof I32[]);   /* Implementation-defined */
 
     return 0;
 }
