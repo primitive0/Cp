@@ -5,8 +5,8 @@ fn I32 main() {
         return 1;
     }
 
-    Usz n = len(string);
-    for (Usz i = 0; i < n / 2; ++i) {
+    I32 n = len(string);
+    for (I32 i = 0; i < n / 2; ++i) {
         U8 tmp = string[i];
         string[i] = string[n-1-i];
         string[n-1-i] = tmp;
