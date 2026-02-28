@@ -1,0 +1,13 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+[CMakeLists.txt]
+indent_style = space
+indent_size = 2
+
+[*.{cppm,cpp,hpp}]
+indent_style = space
+indent_size = 4
