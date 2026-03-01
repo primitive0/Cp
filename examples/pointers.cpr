@@ -1,27 +1,20 @@
 fn I32 main() {
-    const I32 constant = 42;
     I32 variable = 4;
 
     /* &x is an address-of operator.
-       For constants &x returns read-only pointer,
-       for mutable values &x returns read-write pointer.
+       For values &x returns read-write pointer.
     */
-    println(&constant); /* Address of constant */
     println(&variable); /* Address of variable */
-
-    /* *&constant = 100 - 7; <-- Compile-time error! */
 
     /* &(23) <-- Cannot take address of rvalue! */
 
+
     /* T const* is a read-only pointer */
-    I32 const* ro_ptr = &constant;
-    println(*ro_ptr); /* 42 */
+    I32 const* ro_ptr = &variable;
+    println(*ro_ptr); /* 4 */
 
     /* Cannot change underlying value of read-only pointer */
     /* *ro_ptr = 43; */
-
-    ro_ptr = &variable;
-    println(*ro_ptr); /* 4 */
 
     ++variable;
     println(*ro_ptr); /* 5 */
