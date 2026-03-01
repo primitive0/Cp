@@ -1,0 +1,59 @@
+translation_unit =
+    { top_level_declaration } ;
+
+top_level_declaration =
+    FN , function_declaration ;
+
+function_declaration =
+    type , IDENTIFIER , "(" , [ parameter_list ] , ")" , block ;
+
+parameter_list =
+    parameter , { "," , parameter } ;
+
+parameter =
+    type , IDENTIFIER ;
+
+block =
+    "{" , { statement } , "}" ;
+
+statement =
+    type , variable_declaration |
+    expression_statement |
+    IF if_statement |
+    WHILE while_statement |
+    FOR for_statement |
+    RETURN return_statement |
+    ";" ;
+
+variable_declaration =
+    init_declarator_list ;
+
+init_declarator_list =
+    init_declarator , { "," , init_declarator } ;
+
+init_declarator =
+    IDENTIFIER, [ "=", expression ] ;
+
+expression = ? ... ?
+
+type =
+    type_name , { type_specifier } ;
+
+type_specifier =
+    [ CONST ] , "*"  |
+    [ CONST ] , "[]" |
+    "[" literal "]"  ;
+
+(* Чтобы избежать неоднозначности в грамматике, явно указываем имена типов *)
+type_name =
+    "Unit" |
+    "I32"  |
+    "U8"   |
+    "Bool" ;
+
+literal =
+    INTEGER_LITERAL   |
+    STRING_LITERAL    |
+    CHARACTER_LITERAL |
+    TRUE              |
+    FALSE             ;
