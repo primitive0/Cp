@@ -67,7 +67,6 @@ slash       = "/" ;
 percent     = "%" ;
 ampersand   = "&" ;
 exclamation = "!" ;
-at_sign     = "@" ;
 
 assign         = "="  ;
 plus_assign    = "+=" ;
