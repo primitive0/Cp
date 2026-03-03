@@ -1,0 +1,10 @@
+fn I32 main()
+{
+    I32 fahrenheit, celsius;
+    read(&fahrenheit); 
+    
+    celsius = (fahrenheit - 32) * 5 / 9;
+    println(celsius);
+
+    return 0;
+}

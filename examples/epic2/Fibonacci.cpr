@@ -1,0 +1,22 @@
+fn I32 main()
+{
+    I32 number;
+    if(!read(&number))
+    {
+        return 1;
+    }
+
+    println(fibonacci(number))
+
+    return 0;
+}
+
+fn I32 fibonacci (I32 number)
+{
+    if (number <= 1)
+    {
+        return number;
+    }
+    
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
