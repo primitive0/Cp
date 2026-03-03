@@ -17,34 +17,123 @@ block =
     "{" , { statement } , "}" ;
 
 statement =
+    expression_statement        |
     type , variable_declaration |
-    expression_statement |
-    IF if_statement |
-    WHILE while_statement |
-    FOR for_statement |
-    RETURN return_statement |
-    ";" ;
+    IF , if_statement           |
+    WHILE , while_statement     |
+    FOR , for_statement         |
+    RETURN , return_statement   |
+    ";"                         ;
+
+expression_statement =
+    expression , ";" ;
 
 variable_declaration =
-    init_declarator_list ;
+    init_declarator_list , ";" ;
 
 init_declarator_list =
     init_declarator , { "," , init_declarator } ;
 
 init_declarator =
-    IDENTIFIER, [ "=", expression ] ;
+    IDENTIFIER , [ "=" , expression ] ;
 
-expression = ? ... ?
+if_statement =
+    "(" , expression , ")" , block ,
+    { ELSE , IF , "(" , expression , ")" , block } ,
+    [ ELSE , block ];
+
+while_statement =
+    "(" , expression , ")" , block ;
+
+for_statement =
+    "(" , [ type , init_declarator ] , ";" , [ expression ] , ";" , [ expression ] , ")" , block ;
+
+return_statement =
+    [ expression ] , ";" ;
+
+expression_list =
+    expression , { "," , expression } ;
+
+expression =
+    assign_expression ;
+
+assign_expression =
+    logical_or_expression , [ "=" , assign_expression ] ;
+
+logical_or_expression =
+    logical_and_expression                                |
+    logical_or_expression , "||" , logical_and_expression ;
+
+logical_and_expression =
+    relational_expression                                 |
+    logical_and_expression , "&&" , relational_expression ;
+
+relational_expression =
+    add_expression                                         |
+    relational_expression , relational_op , add_expression ;
+
+relational_op =
+    "==" |
+    "!=" |
+    ">=" |
+    "<=" |
+    ">"  |
+    "<"  ;
+
+add_expression =
+    mul_expression                           |
+    add_expression , add_op , mul_expression ;
+
+add_op =
+    "+" |
+    "-" ;
+
+mul_expression =
+    prefix_expression                           |
+    mul_expression , mul_op , prefix_expression ;
+
+mul_op =
+    "*" |
+    "/" |
+    "%" ;
+
+prefix_expression =
+    postfix_expression            |
+    prefix_op , prefix_expression ;
+
+prefix_op =
+    "&"              |
+    "*"              |
+    "-"              |
+    "!"              |
+    "++"             |
+    "--"             |
+    "(" , type , ")" ;
+
+postfix_expression =
+    primary_expression              |
+    postfix_expression , postfix_op ;
+
+postfix_op =
+    "[" , expression , "]"                            |
+    "[" , [ expression ] , ":" , [ expression ] , "]" |
+    "(" , [ expression_list ] , ")"                   ;
+
+primary_expression =
+    literal                                   |
+    IDENTIFIER                                |
+    "[" , expression , ";" , expression , "]" |
+    "[" , [ expression_list ] , "]"           |
+    "(" , expression , ")"                    ;
 
 type =
     type_name , { type_specifier } ;
 
 type_specifier =
-    [ CONST ] , "*"  |
-    [ CONST ] , "[]" |
-    "[" literal "]"  ;
+    [ CONST ] , "*"             |
+    [ CONST ] , "[]"            |
+    "[" , INTEGER_LITERAL , "]" ;
 
-(* Чтобы избежать неоднозначности в грамматике, явно указываем имена типов *)
 type_name =
     "Unit" |
     "I32"  |
