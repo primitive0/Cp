@@ -1,0 +1,32 @@
+fn I32 main()
+{
+    U8[] word;
+
+    if(!readln(&word))
+    {
+        return 1;
+    }
+
+    I32 n = len(word);
+    Bool isPalindrome = true;
+
+    for(I32 i = 0; i < n / 2; ++i)
+    {
+        if(word[i] != word[n - 1 - i])
+        {
+            isPalindrome = false;
+        }
+    }
+
+    if(!isPalindrome)
+    {
+        println("It is palindrome");
+    }else
+    {
+        println(It is not palindrome);
+    }
+
+    free((U8*) word);
+
+    return 0;
+}
