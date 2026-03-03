@@ -1,0 +1,17 @@
+fn I32 main() {
+    U8[] str;
+    if (!readln(&str)) {
+        return 1;
+    }
+
+    for (I32 i = 0; i < len(str); ++i) {
+        if(str[i] >= 'A' && str[i] <= 'Z') {
+            str[i] = str[i] + (U8) 32;
+        }
+    }
+    println(str);
+
+    free((U8*) str);
+
+    return 0;
+}
