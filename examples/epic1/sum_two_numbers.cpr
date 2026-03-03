@@ -1,5 +1,4 @@
-fn I32 main()
-{
+fn I32 main(){
     I32 a, b;
     read(&a);
     read(&b)

@@ -1,5 +1,4 @@
-fn I32 main()
-{
+fn I32 main(){
     I32 fahrenheit, celsius;
     read(&fahrenheit); 
     
