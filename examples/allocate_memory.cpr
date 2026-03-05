@@ -2,8 +2,8 @@ fn I32 main() {
     /* alloc() returns U8* */
     U8* data = alloc(sizeof I32 * 3);
 
-    /* Create slice using slice expression */
-    I32[] ints = [ (I32*) data; 3 ];
+    /* Create slice using subscript operator */
+    I32[] ints = ((I32*) data)[0:3];
 
     ints[0] = 11;
     ints[1] = 12;

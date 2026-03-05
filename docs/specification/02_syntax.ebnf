@@ -122,7 +122,6 @@ postfix_op =
 primary_expression =
     literal                                   |
     IDENTIFIER                                |
-    "[" , expression , ";" , expression , "]" |
     "[" , [ expression_list ] , "]"           |
     "(" , expression , ")"                    ;
 
