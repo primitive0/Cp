@@ -4,6 +4,7 @@
 
 ## Содержание
 
+- [Регистрозависимость](#регистрозависимость)
 - [Ключевые слова и идентификаторы](#ключевые-слова-и-идентификаторы)
 - [Операторные токены](#операторные-токены)
 - [Пунктуация](#пунктуация)
@@ -21,68 +22,69 @@
 Ключевые слова состоят из букв `a-z`.
 
 ```
-fn      = "fn"      ;
-return  = "return"  ;
-const   = "const"   ;
-if      = "if"      ;
-else    = "else"    ;
-while   = "while"   ;
-for     = "for"     ;
-true    = "true"    ;
-false   = "false"   ;
-null    = "null"    ;
-sizeof  = "sizeof"  ;
-alignof = "alignof" ;
+FN      = "fn"      ;
+RETURN  = "return"  ;
+CONST   = "const"   ;
+IF      = "if"      ;
+ELSE    = "else"    ;
+WHILE   = "while"   ;
+FOR     = "for"     ;
+TRUE    = "true"    ;
+FALSE   = "false"   ;
+NULL    = "null"    ;
+SIZEOF  = "sizeof"  ;
+ALIGNOF = "alignof" ;
 ```
 
 Идентификатор состоит из символов `a-zA-Z0-9_`, но первый символ идентификатора не может быть цифрой. _Если строка соответствует правилам ключевого слова и идентификатора, то такая строка является ключевым словом._
 
 ```
-lower_letter =
+LOWER_LETTER =
     "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" |
     "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" ;
 
-upper_letter =
+UPPER_LETTER =
     "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" |
     "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" ;
 
-letter =
-    lower_letter |
-    upper_letter ;
+LETTER =
+    LOWER_LETTER |
+    UPPER_LETTER ;
 
-digit =
+DIGIT =
     "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
 
-identifier_char =
-    letter | digit | "_" ;
+IDENTIFIER_CHAR =
+    LETTER |
+    DIGIT  |
+    "_"    ;
 
-identifier =
-    identifier_char - digit ,
-    { identifier_char }     ;
+IDENTIFIER =
+    IDENTIFIER_CHAR - DIGIT , { IDENTIFIER_CHAR } ;
 ```
 
 ## Операторные токены
 
 ```
-plus        = "+" ;
-minus       = "-" ;
-star        = "*" ;
-slash       = "/" ;
-percent     = "%" ;
-ampersand   = "&" ;
-exclamation = "!" ;
+PLUS        = "+" ;
+MINUS       = "-" ;
+STAR        = "*" ;
+SLASH       = "/" ;
+PERCENT     = "%" ;
+AMPERSAND   = "&" ;
+EXCLAMATION = "!" ;
 
-assign         = "="  ;
-plus_assign    = "+=" ;
-minus_assign   = "-=" ;
-star_assign    = "*=" ;
-slash_assign   = "/=" ;
-percent_assign = "%=" ;
-increment      = "++" ;
-equals         = "==" ;
-not_equals     = "!=" ;
-logical_and    = "&&" ;
-logical_or     = "||" ;
+ASSIGN         = "="  ;
+PLUS_ASSIGN    = "+=" ;
+MINUS_ASSIGN   = "-=" ;
+STAR_ASSIGN    = "*=" ;
+SLASH_ASSIGN   = "/=" ;
+PERCENT_ASSIGN = "%=" ;
+INCREMENT      = "++" ;
+EQUALS         = "==" ;
+NOT_EQUALS     = "!=" ;
+LOGICAL_AND    = "&&" ;
+LOGICAL_OR     = "||" ;
 ```
 
 _Если несколько токенов могут начинаться в одной позиции, выбирается токен с наибольшей длиной совпадения._
@@ -90,19 +92,19 @@ _Если несколько токенов могут начинаться в �
 ## Пунктуация
 
 ```
-left_paren   = "(" ;
-left_bracket = "[" ;
-left_brace   = "{" ;
-left_angle   = "<" ;
+LEFT_PAREN   = "(" ;
+LEFT_BRACKET = "[" ;
+LEFT_BRACE   = "{" ;
+LEFT_ANGLE   = "<" ;
 
-right_paren   = ")" ;
-right_bracket = "]" ;
-right_brace   = "}" ;
-right_angle   = ">" ;
+RIGHT_PAREN   = ")" ;
+RIGHT_BRACKET = "]" ;
+RIGHT_BRACE   = "}" ;
+RIGHT_ANGLE   = ">" ;
 
-semicolon = ";" ;
-colon     = ":" ;
-comma     = "," ;
+SEMICOLON = ";" ;
+COLON     = ":" ;
+COMMA     = "," ;
 ```
 
 ## Литералы
@@ -110,9 +112,9 @@ comma     = "," ;
 ### Целочисленный литерал
 
 ```
-integer_literal =
-    digit - "0" ,
-    { digit }   ;
+INTEGER_LITERAL =
+    DIGIT - "0" , { DIGIT } |
+    "0"                     ;
 ```
 
 ### Строковый и символьный литералы
