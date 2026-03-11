@@ -17,6 +17,7 @@ block =
     "{" , { statement } , "}" ;
 
 statement =
+    block                       |
     expression_statement        |
     type , variable_declaration |
     IF , if_statement           |
