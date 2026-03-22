@@ -1,0 +1,2 @@
+add_library(cprime_support INTERFACE)
+target_link_libraries(cprime_support INTERFACE cprime_headers)

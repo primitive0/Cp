@@ -36,7 +36,12 @@ else()
     message(STATUS "Linking against component libraries: ${llvm_libs}")
 endif()
 
+find_package(Catch2 REQUIRED)
+include(Catch)
 
-add_executable(hello_llvm src/compiler/driver/main.cpp)
+
+add_executable(hello_llvm src/cprime/compiler/driver/main.cpp)
 target_compile_definitions(hello_llvm PRIVATE ${LLVM_DEFINITIONS})
 target_link_libraries(hello_llvm PRIVATE ${llvm_libs})
+
+add_subdirectory(src/)
