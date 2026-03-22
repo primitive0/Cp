@@ -1,0 +1,6 @@
+[generators]
+CMakeToolchain
+CMakeDeps
+
+[layout]
+cmake_layout
