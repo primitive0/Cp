@@ -37,7 +37,7 @@ auto TempFile::remove() noexcept -> void
     }
 
     // Передаём error_code, чтобы избежать выбрасывания исключений.
-    std::error_code error_code;
+    std::error_code error_code{};
     std::filesystem::remove(path_, error_code);
 }
 
