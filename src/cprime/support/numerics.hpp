@@ -3,9 +3,6 @@
 
 #include <cstdint>
 
-// Include size_t, ptrdiff_t and other types
-#include <cstddef>
-
 using i8 = std::int8_t;
 using i16 = std::int16_t;
 using i32 = std::int32_t;
