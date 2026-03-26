@@ -52,3 +52,22 @@ TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
 
     CHECK(buffer->path() == kSourcePath);
 }
+
+TEST_CASE("SourceSpan is constructed", "[cprime][source]")
+{
+    constexpr std::string_view kSourceText =
+        "fn U8 fizz() { return '3'; }\n";
+    constexpr size_t kColumn = 5;
+
+    std::unique_ptr<SourceBuffer> buffer =
+        SourceBuffer::from_content(std::string{kSourceText});
+    SourceSpan span{
+        *buffer,
+        SourceLocation{1, kColumn},
+        buffer->content().substr(kColumn)};
+
+    CHECK(&span.buffer() == &*buffer);
+    CHECK(span.start().line == 1);
+    CHECK(span.start().column == kColumn);
+    CHECK(span.content() == kSourceText.substr(kColumn));
+}
