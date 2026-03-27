@@ -1,8 +1,8 @@
 #ifndef CPRIME_SUPPORT_TEMPFILE_H_
 #define CPRIME_SUPPORT_TEMPFILE_H_
 
-#include "prelude.hpp"
 #include <filesystem>
+#include <cprime/support/prelude.hpp>
 
 namespace cprime::support {
 

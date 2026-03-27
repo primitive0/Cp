@@ -59,3 +59,13 @@ PenaltyBreakBeforeFirstCallParameter: 9999
 # T
 # function(int foo, int bar);
 PenaltyReturnTypeOnItsOwnLine: 9999
+
+IncludeCategories:
+  - Regex: '^<catch2/'
+    Priority: 20
+  - Regex: '^<cprime/support/prelude\.hpp>$'
+    Priority: 9
+  - Regex: '^<cprime/'
+    Priority: 10
+  - Regex: '.*'
+    Priority: 0

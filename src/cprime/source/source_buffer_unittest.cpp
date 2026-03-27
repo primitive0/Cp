@@ -1,7 +1,7 @@
 #include "source_buffer.hpp"
 
-#include <catch2/catch_test_macros.hpp>
 #include <cprime/support/temp_file.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 namespace cprime::source {
 namespace {
