@@ -3,7 +3,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <cprime/support/temp_file.hpp>
 
-using namespace cprime::source;
+namespace cprime::source {
+namespace {
 
 using cprime::support::TempFile;
 
@@ -71,3 +72,6 @@ TEST_CASE("SourceSpan is constructed", "[cprime][source]")
     CHECK(span.start().column == kColumn);
     CHECK(span.content() == kSourceText.substr(kColumn));
 }
+
+} // namespace
+} // namespace cprime::source
