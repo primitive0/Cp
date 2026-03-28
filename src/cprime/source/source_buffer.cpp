@@ -1,7 +1,9 @@
 #include "source_buffer.hpp"
 
+#include <format>
 #include <fstream>
 #include <iterator>
+#include <stdexcept>
 
 namespace cprime::source {
 
@@ -11,7 +13,16 @@ auto SourceBuffer::from_file(const std::filesystem::path& path)
     // Используем std::ios::binary, потому что SourceBuffer хранит исходный
     // текст как есть.
     std::ifstream input{path, std::ios::binary};
+    if (input.fail()) {
+        throw std::runtime_error{
+            std::format("failed to open file {}", path.native())};
+    }
+
     std::string content{std::istreambuf_iterator{input}, {}};
+    if (input.fail()) {
+        throw std::runtime_error{
+            std::format("failed to read file {}", path.native())};
+    }
 
     auto source_buffer = std::make_unique<SourceBuffer>(ConstructionToken{});
     source_buffer->path_ = path;

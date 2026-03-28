@@ -1,5 +1,6 @@
 #include "source_buffer.hpp"
 
+#include <stdexcept>
 #include <cprime/support/temp_file.hpp>
 #include <catch2/catch_test_macros.hpp>
 
@@ -52,6 +53,13 @@ TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
     buffer->set_path(kSourcePath);
 
     REQUIRE(buffer->path() == kSourcePath);
+}
+
+TEST_CASE("SourceBuffer can't open non-existent file", "[cprime][source]")
+{
+    REQUIRE_THROWS_AS(
+        SourceBuffer::from_file("/this/does/not/exist"),
+        std::runtime_error);
 }
 
 TEST_CASE("SourceSpan is constructed", "[cprime][source]")
