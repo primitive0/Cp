@@ -71,9 +71,9 @@ public:
         : buffer_{&buffer}
         , location_{location}
         , ptr_{begin}
-        , length_{static_cast<size_t>(end - begin)}
     {
         assert(begin <= end);
+        length_ = static_cast<size_t>(end - begin);
     }
 
     auto buffer() const -> const SourceBuffer&
