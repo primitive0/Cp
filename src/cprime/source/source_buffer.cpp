@@ -39,7 +39,7 @@ auto SourceBuffer::set_path(const std::filesystem::path& path) -> void
 
 auto SourceBuffer::content() const -> std::string_view
 {
-    return std::string_view{content_};
+    return content_;
 }
 
 auto SourceBuffer::begin() const -> const char*

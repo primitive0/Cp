@@ -17,11 +17,11 @@ TEST_CASE("SourceBuffer is created from file", "[cprime][source]")
     std::unique_ptr<SourceBuffer> buffer =
         SourceBuffer::from_file(source_file.path());
 
-    CHECK(buffer->path() == source_file.path());
-    CHECK(buffer->content() == kSourceText);
-    CHECK(buffer->cbegin() == buffer->begin());
-    CHECK(buffer->cend() == buffer->end());
-    CHECK(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
+    REQUIRE(buffer->path() == source_file.path());
+    REQUIRE(buffer->content() == kSourceText);
+    REQUIRE(buffer->cbegin() == buffer->begin());
+    REQUIRE(buffer->cend() == buffer->end());
+    REQUIRE(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
 }
 
 TEST_CASE("SourceBuffer is created from content", "[cprime][source]")
@@ -31,11 +31,11 @@ TEST_CASE("SourceBuffer is created from content", "[cprime][source]")
     std::unique_ptr<SourceBuffer> buffer =
         SourceBuffer::from_content(std::string{kSourceText});
 
-    CHECK(buffer->path().empty());
-    CHECK(buffer->content() == kSourceText);
-    CHECK(buffer->cbegin() == buffer->begin());
-    CHECK(buffer->cend() == buffer->end());
-    CHECK(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
+    REQUIRE(buffer->path().empty());
+    REQUIRE(buffer->content() == kSourceText);
+    REQUIRE(buffer->cbegin() == buffer->begin());
+    REQUIRE(buffer->cend() == buffer->end());
+    REQUIRE(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
 }
 
 TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
@@ -47,30 +47,35 @@ TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
     std::unique_ptr<SourceBuffer> buffer =
         SourceBuffer::from_content(std::string{kSourceText});
 
-    CHECK(buffer->path().empty());
+    REQUIRE(buffer->path().empty());
 
     buffer->set_path(kSourcePath);
 
-    CHECK(buffer->path() == kSourcePath);
+    REQUIRE(buffer->path() == kSourcePath);
 }
 
 TEST_CASE("SourceSpan is constructed", "[cprime][source]")
 {
     constexpr std::string_view kSourceText =
         "fn U8 fizz() { return '3'; }\n";
-    constexpr size_t kColumn = 5;
 
     std::unique_ptr<SourceBuffer> buffer =
         SourceBuffer::from_content(std::string{kSourceText});
+
+    // ...U8 |fizz|()...
     SourceSpan span{
         *buffer,
-        SourceLocation{1, kColumn},
-        buffer->content().substr(kColumn)};
+        LineColumn{1, 7},
+        buffer->content().begin() + 6,
+        buffer->content().begin() + 10};
 
-    CHECK(&span.buffer() == &*buffer);
-    CHECK(span.start().line == 1);
-    CHECK(span.start().column == kColumn);
-    CHECK(span.content() == kSourceText.substr(kColumn));
+    REQUIRE(&span.buffer() == &*buffer);
+    REQUIRE(span.location().line == 1);
+    REQUIRE(span.location().column == 7);
+    REQUIRE(span.content() == "fizz");
+    REQUIRE(span.cbegin() == span.begin());
+    REQUIRE(span.cend() == span.end());
+    REQUIRE(std::string_view{span.begin(), span.end()} == "fizz");
 }
 
 } // namespace

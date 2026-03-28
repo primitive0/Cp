@@ -1,6 +1,7 @@
 #ifndef CPRIME_SOURCE_SOURCEBUFFER_H_
 #define CPRIME_SOURCE_SOURCEBUFFER_H_
 
+#include <cassert>
 #include <filesystem>
 #include <cprime/support/prelude.hpp>
 
@@ -51,10 +52,12 @@ private:
     std::string content_{};
 };
 
-struct SourceLocation
+struct LineColumn
 {
     i32 line;
     i32 column;
+
+    auto operator==(const LineColumn&) const -> bool = default;
 };
 
 class SourceSpan final
@@ -62,13 +65,15 @@ class SourceSpan final
 public:
     explicit SourceSpan(
         const SourceBuffer& buffer,
-        SourceLocation start,
-        std::string_view content)
+        LineColumn location,
+        const char* begin,
+        const char* end)
         : buffer_{&buffer}
-        , start_{start}
-        , content_{content}
-
+        , location_{location}
+        , ptr_{begin}
+        , length_{static_cast<size_t>(end - begin)}
     {
+        assert(begin <= end);
     }
 
     auto buffer() const -> const SourceBuffer&
@@ -76,24 +81,24 @@ public:
         return *buffer_;
     }
 
-    auto start() const -> SourceLocation
+    auto location() const -> LineColumn
     {
-        return start_;
+        return location_;
     }
 
-    auto content() const -> std::string_view
+    auto size() const -> size_t
     {
-        return content_;
+        return length_;
     }
 
     auto begin() const -> const char*
     {
-        return content_.begin();
+        return ptr_;
     }
 
     auto end() const -> const char*
     {
-        return content_.end();
+        return ptr_ + length_;
     }
 
     auto cbegin() const -> const char*
@@ -106,10 +111,16 @@ public:
         return end();
     }
 
+    auto content() const -> std::string_view
+    {
+        return std::string_view{ptr_, length_};
+    }
+
 private:
     const SourceBuffer* buffer_;
-    SourceLocation start_;
-    std::string_view content_;
+    LineColumn location_;
+    const char* ptr_;
+    size_t length_;
 };
 
 } // namespace cprime::source
