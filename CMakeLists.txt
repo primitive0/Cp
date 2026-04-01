@@ -15,6 +15,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(IPOSupport)
 
 
+find_package(magic_enum REQUIRED)
+find_package(utf8cpp REQUIRED)
 # TODO: configure LLVM properly
 find_package(LLVM REQUIRED CONFIG)
 # Distro LLVM is typically built as a single libLLVM.so.
@@ -40,8 +42,8 @@ find_package(Catch2 REQUIRED)
 include(Catch)
 
 
-add_executable(hello_llvm src/cprime/compiler/driver/main.cpp)
-target_compile_definitions(hello_llvm PRIVATE ${LLVM_DEFINITIONS})
-target_link_libraries(hello_llvm PRIVATE ${llvm_libs})
+# add_executable(hello_llvm src/cprime/compiler/driver/main.cpp)
+# target_compile_definitions(hello_llvm PRIVATE ${LLVM_DEFINITIONS})
+# target_link_libraries(hello_llvm PRIVATE ${llvm_libs})
 
 add_subdirectory(src/)
