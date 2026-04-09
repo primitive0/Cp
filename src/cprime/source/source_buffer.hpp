@@ -19,7 +19,7 @@ public:
 
     static auto from_file(const std::filesystem::path& path)
         -> std::unique_ptr<SourceBuffer>;
-    static auto from_content(std::string content)
+    static auto from_text(std::string_view text)
         -> std::unique_ptr<SourceBuffer>;
 
     auto path() const -> const std::filesystem::path&;

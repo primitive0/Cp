@@ -1,68 +1,65 @@
 #include "source_buffer.hpp"
 
 #include <stdexcept>
+#include <string_view>
 #include <cprime/support/temp_file.hpp>
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 namespace cprime::source {
 namespace {
 
 using cprime::support::TempFile;
 
-TEST_CASE("SourceBuffer is created from empty file", "[cprime][source]")
+TEST_CASE("SourceBuffer is created", "[cprime][source]")
 {
-    TempFile source_file{};
+    struct TC
+    {
+        std::string_view input;
+        std::string_view expected;
+    };
 
-    std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_file(source_file.path());
+    auto [input, expected] = GENERATE(
+        TC{"", ""},
+        TC{"fn I32 main() {}\n", "fn I32 main() {}\n"},
+        TC{"\n", "\n"},
+        TC{"\n\n\n", "\n\n\n"},
+        TC{"\r\n", "\n"},
+        TC{"\r\n\r\n\r\n", "\n\n\n"},
+        TC{"\r", "\n"},
+        TC{"\r\r\r", "\n\n\n"},
+        TC{"\n\n\r\n\r\r", "\n\n\n\n\n"},
+        TC{"Sample text\r", "Sample text\n"},
+        TC{"Trailing line ending", "Trailing line ending\n"},
+        TC{"\xEF\xBB\xBFHello, BOM!\n", "Hello, BOM!\n"},
+        TC{"\xEF\xBB\xBF", ""},
+        TC{"\xEF\xBB\xBE", "\xEF\xBB\xBE\n"},
+        TC{"\xEF\xBC", "\xEF\xBC\n"});
 
-    REQUIRE(buffer->path() == source_file.path());
-    REQUIRE(buffer->content().empty());
-    REQUIRE(buffer->cbegin() == buffer->begin());
-    REQUIRE(buffer->cend() == buffer->end());
-    REQUIRE(buffer->begin() == buffer->end());
-}
+    SECTION("From file")
+    {
+        TempFile source_file = TempFile::with_content(input);
 
-TEST_CASE("SourceBuffer is created from file", "[cprime][source]")
-{
-    constexpr std::string_view kSourceText = "fn I32 main() { return 0; }\n";
+        std::unique_ptr<SourceBuffer> buffer =
+            SourceBuffer::from_file(source_file.path());
 
-    TempFile source_file = TempFile::with_content(kSourceText);
+        REQUIRE(buffer->path() == source_file.path());
+        REQUIRE(buffer->content() == expected);
+        REQUIRE(buffer->cbegin() == buffer->begin());
+        REQUIRE(buffer->cend() == buffer->end());
+        REQUIRE(std::string_view{buffer->begin(), buffer->end()} == expected);
+    }
 
-    std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_file(source_file.path());
+    SECTION("From source text")
+    {
+        std::unique_ptr<SourceBuffer> buffer = SourceBuffer::from_text(input);
 
-    REQUIRE(buffer->path() == source_file.path());
-    REQUIRE(buffer->content() == kSourceText);
-    REQUIRE(buffer->cbegin() == buffer->begin());
-    REQUIRE(buffer->cend() == buffer->end());
-    REQUIRE(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
-}
-
-TEST_CASE("SourceBuffer is created from empty content", "[cprime][source]")
-{
-    std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_content("");
-
-    REQUIRE(buffer->path().empty());
-    REQUIRE(buffer->content().empty());
-    REQUIRE(buffer->cbegin() == buffer->begin());
-    REQUIRE(buffer->cend() == buffer->end());
-    REQUIRE(buffer->begin() == buffer->end());
-}
-
-TEST_CASE("SourceBuffer is created from content", "[cprime][source]")
-{
-    constexpr std::string_view kSourceText = "fn Unit foo() { println(); }\n";
-
-    std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_content(std::string{kSourceText});
-
-    REQUIRE(buffer->path().empty());
-    REQUIRE(buffer->content() == kSourceText);
-    REQUIRE(buffer->cbegin() == buffer->begin());
-    REQUIRE(buffer->cend() == buffer->end());
-    REQUIRE(std::string_view{buffer->begin(), buffer->end()} == kSourceText);
+        REQUIRE(buffer->path().empty());
+        REQUIRE(buffer->content() == expected);
+        REQUIRE(buffer->cbegin() == buffer->begin());
+        REQUIRE(buffer->cend() == buffer->end());
+        REQUIRE(std::string_view{buffer->begin(), buffer->end()} == expected);
+    }
 }
 
 TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
@@ -72,7 +69,7 @@ TEST_CASE("Can set SourceBuffer path", "[cprime][source]")
         "fn I32 the_answer() { return 42; }\n";
 
     std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_content(std::string{kSourceText});
+        SourceBuffer::from_text(kSourceText);
 
     REQUIRE(buffer->path().empty());
 
@@ -94,7 +91,7 @@ TEST_CASE("SourceSpan is constructed", "[cprime][source]")
         "fn U8 fizz() { return '3'; }\n";
 
     std::unique_ptr<SourceBuffer> buffer =
-        SourceBuffer::from_content(std::string{kSourceText});
+        SourceBuffer::from_text(kSourceText);
 
     SECTION("Empty")
     {

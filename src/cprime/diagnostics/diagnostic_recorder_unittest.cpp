@@ -28,7 +28,7 @@ TEST_CASE("DiagnosticRecorder is constructed empty", "[cprime][diagnostics]")
 TEST_CASE("DiagnosticRecorder records diagnostics", "[cprime][diagnostics]")
 {
     std::unique_ptr<SourceBuffer> source_buffer =
-        SourceBuffer::from_content("some text\nfoobar\n");
+        SourceBuffer::from_text("some text\nfoobar\n");
 
     DiagnosticRecorder recorder{};
     {
@@ -75,7 +75,7 @@ TEST_CASE("DiagnosticRecorder records diagnostics", "[cprime][diagnostics]")
 TEST_CASE("DiagnosticRecorder distinguishes errors and warnings", "[cprime][diagnostics]")
 {
     std::unique_ptr<SourceBuffer> source_buffer =
-        SourceBuffer::from_content("another text");
+        SourceBuffer::from_text("another text");
     SourceSpan source_span{
         *source_buffer,
         LineColumn{1, 1},
@@ -109,7 +109,7 @@ TEST_CASE("DiagnosticRecorder distinguishes errors and warnings", "[cprime][diag
 TEST_CASE("Can reset DiagnosticRecorder", "[cprime][diagnostics]")
 {
     std::unique_ptr<SourceBuffer> source_buffer =
-        SourceBuffer::from_content("yet another text");
+        SourceBuffer::from_text("yet another text");
     SourceSpan source_span{
         *source_buffer,
         LineColumn{1, 1},
