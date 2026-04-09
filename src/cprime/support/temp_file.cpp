@@ -3,6 +3,7 @@
 #include <cassert>
 #include <fstream>
 #include <random>
+#include <stdexcept>
 #include <system_error>
 
 namespace cprime::support {
@@ -26,7 +27,9 @@ auto TempFile::with_content(std::string_view content) -> TempFile
 {
     TempFile file{};
     std::ofstream output{file.path(), std::ios::binary};
-    output << content;
+    if (!output.write(content.data(), content.size())) {
+        throw std::runtime_error{"failed to write temporary file"};
+    }
     return file;
 }
 
