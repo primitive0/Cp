@@ -143,9 +143,6 @@ auto Lexer::next() -> Token
 
     // TODO: handle single-char tokens correctly
     switch (ch) {
-    case U';':
-        scanner_.advance();
-        return capture_and_emit(TokenKind::Semicolon);
     case U'(':
         scanner_.advance();
         return capture_and_emit(TokenKind::ParenOpen);
