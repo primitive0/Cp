@@ -1,0 +1,9 @@
+add_executable(cpc
+  main.cpp)
+target_link_libraries(cpc
+  PRIVATE
+    cprime_support
+    cprime_source
+    cprime_diagnostics
+    cprime_ast
+    cprime_parse)

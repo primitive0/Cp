@@ -48,6 +48,9 @@ public:
     Lexer(const Lexer&) = delete;
     Lexer& operator=(const Lexer&) = delete;
 
+    Lexer(Lexer&&) = default;
+    Lexer& operator=(Lexer&&) = default;
+
     explicit Lexer(
         const source::SourceBuffer& source_buffer,
         diagnostics::IDiagnosticSink& diagnostic_sink);

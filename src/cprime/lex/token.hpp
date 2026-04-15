@@ -21,6 +21,7 @@ enum class TokenKind {
     BraceOpen,
     BraceClose,
     Semicolon,
+    Comma, // TODO: implement
 
     // Литералы
     StringLiteral,
@@ -118,6 +119,46 @@ private:
     source::SourceSpan span_;
     TokenValue computed_value_;
 };
+
+inline auto describe(TokenKind kind) -> std::string
+{
+    switch (kind) {
+    case TokenKind::Fn:
+        return "'fn'";
+    case TokenKind::Return:
+        return "'return'";
+
+    case TokenKind::Identifier:
+        return "identifier";
+
+    case TokenKind::ParenOpen:
+        return "'('";
+    case TokenKind::ParenClose:
+        return "')'";
+    case TokenKind::BraceOpen:
+        return "'{'";
+    case TokenKind::BraceClose:
+        return "'}'";
+    case TokenKind::Semicolon:
+        return "';'";
+    case TokenKind::Comma:
+        return "','";
+
+    case TokenKind::StringLiteral:
+        return "string literal";
+    case TokenKind::IntegerLiteral:
+        return "integer literal";
+
+    case TokenKind::NewLine:
+        return "newline";
+    case TokenKind::Eof:
+        return "end of file";
+    case TokenKind::Error:
+        return "invalid token";
+    }
+
+    return "<UNKNOWN TOKEN>";
+}
 
 } // namespace cprime::lex
 
