@@ -1,5 +1,7 @@
+#include <filesystem>
 #include <print>
 
+#include <cprime/compiler/codegen_llvm/codegen.hpp>
 #include <cprime/diagnostics/diagnostic_recorder.hpp>
 #include <cprime/parse/parse.hpp>
 #include <cprime/source/source_buffer.hpp>
@@ -14,7 +16,7 @@ int main(int argc, char* argv[])
     auto source_buffer = cprime::source::SourceBuffer::from_file(argv[1]);
 
     cprime::diagnostics::DiagnosticRecorder diagnostics;
-    cprime::parse::parse(*source_buffer, diagnostics);
+    auto ast_context = cprime::parse::parse(*source_buffer, diagnostics);
 
     for (const auto& diag : diagnostics) {
         auto loc = diag.span.location();
@@ -28,5 +30,13 @@ int main(int argc, char* argv[])
             diag.message);
     }
 
-    return diagnostics.has_errors() ? 1 : 0;
+    if (diagnostics.has_errors()) {
+        return 1;
+    }
+
+    const auto src_path = std::filesystem::path{argv[1]};
+    const auto exe_path = src_path.parent_path() / src_path.stem();
+    cprime::compiler::codegen_llvm::generate_executable(ast_context, exe_path);
+
+    return 0;
 }

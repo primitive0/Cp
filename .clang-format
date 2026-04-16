@@ -67,5 +67,7 @@ IncludeCategories:
     Priority: 9
   - Regex: '^<cprime/'
     Priority: 10
+  - Regex: '^<llvm/'
+    Priority: 5
   - Regex: '.*'
     Priority: 0

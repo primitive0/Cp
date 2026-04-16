@@ -6,4 +6,5 @@ target_link_libraries(cpc
     cprime_source
     cprime_diagnostics
     cprime_ast
-    cprime_parse)
+    cprime_parse
+    cprime_compiler_codegen_llvm)
