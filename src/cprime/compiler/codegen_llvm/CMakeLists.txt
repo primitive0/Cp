@@ -20,11 +20,6 @@ else()
 endif()
 
 
-add_executable(llvm_demo llvm_demo.cpp)
-target_include_directories(llvm_demo SYSTEM PRIVATE ${LLVM_INCLUDE_DIRS})
-target_compile_definitions(llvm_demo PRIVATE ${LLVM_DEFINITIONS})
-target_link_libraries(llvm_demo PRIVATE ${llvm_libs})
-
 add_library(cprime_compiler_codegen_llvm STATIC
   lower.cpp
   codegen.cpp)
