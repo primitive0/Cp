@@ -145,4 +145,5 @@ literal =
     STRING_LITERAL    |
     CHARACTER_LITERAL |
     TRUE              |
+    NULL              |
     FALSE             ;
