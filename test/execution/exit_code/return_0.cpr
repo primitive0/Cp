@@ -1,0 +1,6 @@
+/* RUN: %cpc %s %t.out && %t.out | %check_output %s.stdout
+*/
+
+fn I32 main() {
+    return 0;
+}
