@@ -66,7 +66,8 @@ private:
     auto on_error() -> Token;
 
     auto capture_and_emit(TokenKind kind) -> Token;
-    auto skip_spaces() -> void;
+    auto skip_whitespaces_and_comments() -> void;
+    auto try_parse_comment() -> bool;
 
     auto diagnose_invalid_utf8(u8 byte, source::SourceSpan span) -> void;
 

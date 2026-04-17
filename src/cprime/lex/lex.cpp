@@ -124,7 +124,7 @@ Lexer::Lexer(
 
 auto Lexer::next() -> Token
 {
-    skip_spaces();
+    skip_whitespaces_and_comments();
 
     char32_t ch = scanner_.peek();
     if (ch == TextScanner::kNoChar) {
@@ -317,12 +317,63 @@ auto Lexer::capture_and_emit(TokenKind kind) -> Token
     return Token{kind, scanner_.capture()};
 }
 
-auto Lexer::skip_spaces() -> void
+auto Lexer::skip_whitespaces_and_comments() -> void
 {
-    while (scanner_.peek() == U' ') {
-        scanner_.advance();
+    while (true) {
+        switch (scanner_.peek()) {
+        case U' ':
+            scanner_.advance();
+            break;
+        case U'/':
+            if (!try_parse_comment()) {
+                std::ignore = scanner_.capture();
+                return;
+            }
+            break;
+        default:
+            std::ignore = scanner_.capture();
+            return;
+        }
     }
-    std::ignore = scanner_.capture();
+}
+
+auto Lexer::try_parse_comment() -> bool
+{
+    // FIXME: this function does not support operator "/"
+
+    scanner_.advance();
+    assert(scanner_.peek() == U'*');
+    scanner_.advance();
+    while (true) {
+        switch (scanner_.peek()) {
+        case TextScanner::kInvalidChar:
+            // FIXME: diagnostic span
+            diagnose_invalid_utf8(
+                scanner_.peek_invalid_byte(),
+                scanner_.capture());
+            scanner_.advance();
+            break;
+
+        case U'*':
+            scanner_.advance();
+            if (scanner_.peek() == '/') {
+                scanner_.advance();
+                return true;
+            }
+            break;
+
+        case TextScanner::kNoChar:
+            // FIXME: diagnostic span
+            diagnostic_sink_->emit_error(
+                "unclosed comment",
+                scanner_.capture());
+            return true;
+
+        default:
+            scanner_.advance();
+            break;
+        }
+    }
 }
 
 auto Lexer::diagnose_invalid_utf8(u8 byte, SourceSpan span) -> void
