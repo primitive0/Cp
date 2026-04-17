@@ -1,4 +1,4 @@
-/* RUN: %cpc %s %t.out && %t.out | FileCheck %s
+/* RUN: %cpc %s %t.out && %t.out | %FileCheck %s
 */
 
 fn I32 main() {
