@@ -6,9 +6,9 @@
 #include <cprime/parse/parse.hpp>
 #include <cprime/source/source_buffer.hpp>
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
-    if (argc != 2) {
+    if (argc < 2) {
         std::println(stderr, "usage: cpc <file>");
         return 1;
     }
@@ -34,8 +34,14 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    const auto src_path = std::filesystem::path{argv[1]};
-    const auto exe_path = src_path.parent_path() / src_path.stem();
+    auto src_path = std::filesystem::path{argv[1]};
+    std::filesystem::path exe_path{};
+    if (argc >= 3) {
+        exe_path = std::filesystem::path{argv[2]};
+    } else {
+        exe_path = std::filesystem::current_path() / src_path.filename();
+        exe_path += ".out";
+    }
     cprime::compiler::codegen_llvm::generate_executable(ast_context, exe_path);
 
     return 0;

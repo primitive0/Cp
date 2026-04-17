@@ -1,0 +1,10 @@
+/* RUN: %cpc %s %t.out && %t.out | FileCheck %s
+*/
+
+fn I32 main() {
+    /* CHECK:x
+    */
+    println("x");
+
+    return 0;
+}

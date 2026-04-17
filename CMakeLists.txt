@@ -27,3 +27,4 @@ include(Catch)
 # target_link_libraries(hello_llvm PRIVATE ${llvm_libs})
 
 add_subdirectory(src/)
+add_subdirectory(test/)

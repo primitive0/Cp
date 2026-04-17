@@ -1,3 +1,4 @@
+# TODO: move find_llvm to separate script
 # TODO: configure LLVM properly
 find_package(LLVM REQUIRED CONFIG)
 # Distro LLVM is typically built as a single libLLVM.so.
