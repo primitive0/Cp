@@ -178,8 +178,12 @@ private:
     {
         auto call = std::make_unique<ast::PrintStmt>();
         expect(TokenKind::ParenOpen);
-        call->args = parse_expr_list();
-        expect(TokenKind::ParenClose);
+        if (stream_.peek().kind() == TokenKind::ParenClose) {
+            stream_.advance();
+        } else {
+            call->args = parse_expr_list();
+            expect(TokenKind::ParenClose);
+        }
         expect(TokenKind::Semicolon);
         return call;
     }
@@ -188,8 +192,12 @@ private:
     {
         auto call = std::make_unique<ast::PrintlnStmt>();
         expect(TokenKind::ParenOpen);
-        call->args = parse_expr_list();
-        expect(TokenKind::ParenClose);
+        if (stream_.peek().kind() == TokenKind::ParenClose) {
+            stream_.advance();
+        } else {
+            call->args = parse_expr_list();
+            expect(TokenKind::ParenClose);
+        }
         expect(TokenKind::Semicolon);
         return call;
     }
