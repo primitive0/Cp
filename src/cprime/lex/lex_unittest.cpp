@@ -340,14 +340,23 @@ TEST_CASE("Can lex punctuation", "[cprime][lex]")
             },
         },
         TC{
-            "{}();\n",
+            ",\n",
+            {
+                {TokenKind::Comma, ",", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "{}();,\n",
             {
                 {TokenKind::BraceOpen, "{", LineColumn{1, 1}},
                 {TokenKind::BraceClose, "}", LineColumn{1, 2}},
                 {TokenKind::ParenOpen, "(", LineColumn{1, 3}},
                 {TokenKind::ParenClose, ")", LineColumn{1, 4}},
                 {TokenKind::Semicolon, ";", LineColumn{1, 5}},
-                {TokenKind::NewLine, "\n", LineColumn{1, 6}},
+                {TokenKind::Comma, ",", LineColumn{1, 6}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 7}},
                 {TokenKind::Eof, "", LineColumn{2, 1}},
             },
         });

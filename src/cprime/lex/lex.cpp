@@ -146,6 +146,9 @@ auto Lexer::next() -> Token
     case U';':
         scanner_.advance();
         return capture_and_emit(TokenKind::Semicolon);
+    case U',':
+        scanner_.advance();
+        return capture_and_emit(TokenKind::Comma);
     case U'(':
         scanner_.advance();
         return capture_and_emit(TokenKind::ParenOpen);
