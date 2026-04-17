@@ -28,6 +28,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install "conan>=2,<3"
 
+      - name: Install LLVM 22
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 22
+
       - name: Select GCC 14
         run: |
           echo "CC=gcc-14" >> $GITHUB_ENV
@@ -46,7 +52,9 @@ jobs:
       # TODO: support different build profiles
       - name: Configure CMake
         run: >
-          cmake --preset conan-release
+          cmake
+          -DLLVM_DIR=/usr/lib/llvm-22/lib/cmake/llvm
+          --preset conan-release
 
       - name: Build
         run: cmake --build --preset conan-release
