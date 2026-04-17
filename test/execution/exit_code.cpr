@@ -1,0 +1,6 @@
+/* RUN: %cpc %s %t.out && %check_exitcode %t.out 101
+*/
+
+fn I32 main() {
+    return 101;
+}

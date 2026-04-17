@@ -1,7 +1,0 @@
-/* RUN: %cpc %s %t.out && not %t.out | %check_output %s.stdout
- * RUN: %cpc %s %t.out && { %t.out ; [ $? -eq 6 ]; }
-*/
-
-fn I32 main() {
-    return 6;
-}
