@@ -84,6 +84,10 @@ EQUALS         = "==" ;
 NOT_EQUALS     = "!=" ;
 LOGICAL_AND    = "&&" ;
 LOGICAL_OR     = "||" ;
+LESS           = "<"  ;
+LESS_EQUAL     = "<=" ;
+GREATER        = ">"  ;
+GREATER_EQUAL  = ">=" ;
 ```
 
 _Если несколько токенов могут начинаться в одной позиции, выбирается токен с наибольшей длиной совпадения._
@@ -94,12 +98,10 @@ _Если несколько токенов могут начинаться в �
 LEFT_PAREN   = "(" ;
 LEFT_BRACKET = "[" ;
 LEFT_BRACE   = "{" ;
-LEFT_ANGLE   = "<" ;
 
 RIGHT_PAREN   = ")" ;
 RIGHT_BRACKET = "]" ;
 RIGHT_BRACE   = "}" ;
-RIGHT_ANGLE   = ">" ;
 
 SEMICOLON = ";" ;
 COLON     = ":" ;
