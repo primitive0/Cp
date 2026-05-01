@@ -25,6 +25,7 @@ public:
     auto next() -> Token;
 
 private:
+    auto parse_token() -> Token;
     auto parse_keyword_or_identifier() -> Token;
     auto parse_integer_literal() -> Token;
     auto parse_string_literal() -> Token;
@@ -36,8 +37,7 @@ private:
     auto skip_whitespaces_and_comments() -> void;
     auto try_parse_comment() -> bool;
 
-    // TODO: refactor this function
-    auto diagnose_invalid_utf8(u8 byte, source::SourceSpan span) -> void;
+    auto diagnose_invalid_utf8_at_cursor() -> void;
 
     [[nodiscard]] auto cursor_span() const -> source::SourceSpan;
     auto advance() -> void;

@@ -2,19 +2,16 @@
 
 #include <cassert>
 #include <charconv>
+#include <cstdlib>
 #include <format>
 #include <system_error>
 #include <utf8.h>
 #include <cprime/source/source_buffer.hpp>
 #include <cprime/support/text.hpp>
 
-// TODO: проверить, что advance() первого символа X происходит внутри
-// всех parse_X()
-
 namespace cprime::lex {
 
 using source::LineColumn;
-using source::SourceBuffer;
 using source::SourceSpan;
 
 namespace {
@@ -52,11 +49,20 @@ Lexer::Lexer(
 auto Lexer::next() -> Token
 {
     skip_whitespaces_and_comments();
+    return parse_token();
+}
+
+auto Lexer::parse_token() -> Token
+{
+    assert(
+        anchor_ == cursor_ &&
+        anchor_location_ == cursor_location_ &&
+        "parse_token() must start with an empty capture range.");
 
     if (ch_ == kNoChar) {
-        // TODO: is this correct implementation?
         return capture_and_emit(TokenKind::Eof);
     }
+
     if (support::text::utf8::is_ascii_alphabetic(ch_) || ch_ == U'_') {
         return parse_keyword_or_identifier();
     }
@@ -67,29 +73,21 @@ auto Lexer::next() -> Token
         return parse_string_literal();
     }
 
-    // TODO: handle single-char tokens correctly
-    switch (ch_) {
-    case U';':
-        advance();
-        return capture_and_emit(TokenKind::Semicolon);
-    case U',':
-        advance();
-        return capture_and_emit(TokenKind::Comma);
-    case U'(':
-        advance();
-        return capture_and_emit(TokenKind::ParenOpen);
-    case U')':
-        advance();
-        return capture_and_emit(TokenKind::ParenClose);
-    case U'{':
-        advance();
-        return capture_and_emit(TokenKind::BraceOpen);
-    case U'}':
-        advance();
-        return capture_and_emit(TokenKind::BraceClose);
-    case U'\n':
-        advance();
-        return capture_and_emit(TokenKind::NewLine);
+    static constexpr auto kSingleCharTokenTable =
+        std::to_array<std::pair<char32_t, TokenKind>>({
+            {U';', TokenKind::Semicolon},
+            {U',', TokenKind::Comma},
+            {U'(', TokenKind::ParenOpen},
+            {U')', TokenKind::ParenClose},
+            {U'{', TokenKind::BraceOpen},
+            {U'}', TokenKind::BraceClose},
+            {U'\n', TokenKind::NewLine},
+        });
+    for (auto [lexeme, token_kind] : kSingleCharTokenTable) {
+        if (ch_ == lexeme) {
+            advance();
+            return capture_and_emit(token_kind);
+        }
     }
 
     return on_error();
@@ -181,6 +179,8 @@ auto Lexer::parse_string_literal() -> Token
             advance();
             break;
         }
+            // TODO: Fix string literal invalid char undiagnosed bug
+            // TODO: format every single file using formatter
         }
     }
 }
@@ -236,12 +236,12 @@ auto Lexer::on_error() -> Token
     assert(ch_ != U'\n' && ch_ != kNoChar);
 
     if (ch_ == kInvalidChar) {
-        diagnose_invalid_utf8(static_cast<u8>(*cursor_), cursor_span());
+        diagnose_invalid_utf8_at_cursor();
         advance();
         return capture_and_emit(TokenKind::Error);
     }
 
-    // TODO: better character formatting
+    // TODO: prettify control sequences and other invisibles
     SourceSpan span = cursor_span();
     diagnostic_sink_->emit_error(
         std::format("unexpected character '{}'", span.content()),
@@ -280,12 +280,14 @@ auto Lexer::try_parse_comment() -> bool
     // FIXME: this function does not support operator "/"
 
     advance();
-    assert(ch_ == U'*');
+    if (ch_ != U'*') {
+        std::abort();
+    }
     advance();
     while (true) {
         switch (ch_) {
         case kInvalidChar:
-            diagnose_invalid_utf8(static_cast<u8>(*cursor_), cursor_span());
+            diagnose_invalid_utf8_at_cursor();
             advance();
             break;
 
@@ -310,11 +312,11 @@ auto Lexer::try_parse_comment() -> bool
     }
 }
 
-auto Lexer::diagnose_invalid_utf8(u8 byte, SourceSpan span) -> void
+auto Lexer::diagnose_invalid_utf8_at_cursor() -> void
 {
     diagnostic_sink_->emit_error(
-        std::format("invalid UTF-8 byte 0x{:02X}", byte),
-        span);
+        std::format("invalid UTF-8 byte 0x{:02X}", static_cast<u8>(*cursor_)),
+        cursor_span());
 }
 
 auto Lexer::cursor_span() const -> SourceSpan
