@@ -9,39 +9,6 @@
 
 namespace cprime::lex {
 
-class TextScanner final
-{
-public:
-    static constexpr char32_t kNoChar = 0xFFFFFFFF;
-    static constexpr char32_t kInvalidChar = 0xFFFFFFFE;
-
-    explicit TextScanner(const source::SourceBuffer& source_buffer);
-
-    [[nodiscard]] auto peek() const -> char32_t;
-    [[nodiscard]] auto peek_raw() const -> std::string_view;
-    [[nodiscard]] auto peek_span() const -> source::SourceSpan;
-    [[nodiscard]] auto peek_invalid_byte() const -> u8;
-
-    auto advance() -> void;
-
-    // auto match(std::string_view) -> bool;
-
-    [[nodiscard]] auto capture() -> source::SourceSpan;
-
-private:
-    auto decode_next() -> void;
-
-private:
-    const source::SourceBuffer* source_buffer_;
-    source::LineColumn anchor_location_;
-    source::LineColumn cursor_location_;
-    const char* anchor_;
-    const char* cursor_;
-    const char* cursor_end_;
-    const char* end_;
-    char32_t cursor_char_;
-};
-
 class Lexer final
 {
 public:
@@ -69,10 +36,26 @@ private:
     auto skip_whitespaces_and_comments() -> void;
     auto try_parse_comment() -> bool;
 
+    // TODO: refactor this function
     auto diagnose_invalid_utf8(u8 byte, source::SourceSpan span) -> void;
 
+    [[nodiscard]] auto cursor_span() const -> source::SourceSpan;
+    auto advance() -> void;
+    [[nodiscard]] auto capture() -> source::SourceSpan;
+    auto decode_next() -> void;
+
 private:
-    TextScanner scanner_;
+    static constexpr char32_t kNoChar = 0xFFFFFFFF;
+    static constexpr char32_t kInvalidChar = 0xFFFFFFFE;
+
+    const source::SourceBuffer* source_buffer_;
+    source::LineColumn anchor_location_;
+    source::LineColumn cursor_location_;
+    const char* anchor_;
+    const char* cursor_;
+    const char* cursor_end_;
+    const char* end_;
+    char32_t ch_;
     diagnostics::IDiagnosticSink* diagnostic_sink_;
 };
 
