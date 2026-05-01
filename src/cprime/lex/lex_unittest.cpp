@@ -529,6 +529,14 @@ TEST_CASE("Can lex invalid string literals", "[cprime][lex]")
                 {TokenKind::NewLine, "\n", LineColumn{1, 3}},
                 {TokenKind::Eof, "", LineColumn{2, 1}},
             },
+        },
+        TC{
+            "\"\x80\"",
+            {
+                {TokenKind::StringLiteral, "\"\x80\"", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 4}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
         });
 
     diagnostics::DiagnosticRecorder diagnostic_recorder{};

@@ -174,13 +174,18 @@ auto Lexer::parse_string_literal() -> Token
             break;
         }
 
+        case kInvalidChar: {
+            has_errors = true;
+            diagnose_invalid_utf8_at_cursor();
+            advance();
+            break;
+        }
+
         default: {
             value.append(cursor_, cursor_end_);
             advance();
             break;
         }
-            // TODO: Fix string literal invalid char undiagnosed bug
-            // TODO: format every single file using formatter
         }
     }
 }
