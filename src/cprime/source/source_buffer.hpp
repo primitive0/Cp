@@ -1,9 +1,9 @@
 #ifndef CPRIME_SOURCE_SOURCEBUFFER_H_
 #define CPRIME_SOURCE_SOURCEBUFFER_H_
 
-#include <cassert>
 #include <filesystem>
 #include <cprime/support/prelude.hpp>
+#include <cprime/support/contract.hpp>
 
 namespace cprime::source {
 
@@ -72,7 +72,7 @@ public:
         , location_{location}
         , ptr_{begin}
     {
-        assert(begin <= end);
+        CPRIME_DEBUG_ASSERT(begin <= end);
         length_ = static_cast<size_t>(end - begin);
     }
 

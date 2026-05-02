@@ -1,12 +1,12 @@
 #include "lex.hpp"
 
-#include <cassert>
 #include <charconv>
 #include <cstdlib>
 #include <format>
 #include <system_error>
 #include <utf8.h>
 #include <cprime/source/source_buffer.hpp>
+#include <cprime/support/contract.hpp>
 #include <cprime/support/text.hpp>
 
 namespace cprime::lex {
@@ -54,9 +54,8 @@ auto Lexer::next() -> Token
 
 auto Lexer::parse_token() -> Token
 {
-    assert(
-        anchor_ == cursor_ &&
-        anchor_location_ == cursor_location_ &&
+    CPRIME_DEBUG_ASSERT(
+        anchor_ == cursor_ && anchor_location_ == cursor_location_,
         "parse_token() must start with an empty capture range.");
 
     if (ch_ == kNoChar) {
@@ -134,7 +133,7 @@ auto Lexer::parse_integer_literal() -> Token
     }
     // Лексема включает в себя только цифры, поэтому должна быть полностью
     // разобрана std::from_chars().
-    assert(it == span.end());
+    CPRIME_DEBUG_ASSERT(it == span.end());
 
     return Token{TokenKind::IntegerLiteral, span, value};
 }
@@ -146,7 +145,7 @@ auto Lexer::parse_string_literal() -> Token
     std::string value{};
     bool has_errors = false;
     while (true) {
-        assert(ch_ != kNoChar);
+        CPRIME_DEBUG_ASSERT(ch_ != kNoChar);
 
         switch (ch_) {
         case U'"': {
@@ -203,7 +202,7 @@ auto Lexer::parse_escape_sequence() -> std::optional<std::string_view>
     // Не диагностируем внезапный конец строкового литерала здесь, а
     // полагаемся на parse_string_literal(). Некорректные символы также
     // диагностируются в parse_string_literal().
-    assert(ch_ != kNoChar);
+    CPRIME_DEBUG_ASSERT(ch_ != kNoChar);
     if (ch_ == U'\n' || ch_ == kInvalidChar) {
         return std::nullopt;
     }
@@ -238,7 +237,7 @@ auto Lexer::parse_escape_sequence() -> std::optional<std::string_view>
 
 auto Lexer::on_error() -> Token
 {
-    assert(ch_ != U'\n' && ch_ != kNoChar);
+    CPRIME_DEBUG_ASSERT(ch_ != U'\n' && ch_ != kNoChar);
 
     if (ch_ == kInvalidChar) {
         diagnose_invalid_utf8_at_cursor();

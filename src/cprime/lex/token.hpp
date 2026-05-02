@@ -1,10 +1,10 @@
 #ifndef CPRIME_LEX_TOKEN_H_
 #define CPRIME_LEX_TOKEN_H_
 
-#include <cassert>
 #include <variant>
 #include <cprime/support/prelude.hpp>
 #include <cprime/source/source_buffer.hpp>
+#include <cprime/support/contract.hpp>
 
 namespace cprime::lex {
 
@@ -52,7 +52,7 @@ public:
         , span_{span}
         , computed_value_{std::move(computed_value)}
     {
-        assert(kind_ == TokenKind::StringLiteral);
+        CPRIME_DEBUG_ASSERT(kind_ == TokenKind::StringLiteral);
     }
 
     explicit Token(
@@ -63,7 +63,7 @@ public:
         , span_{span}
         , computed_value_{computed_value}
     {
-        assert(kind_ == TokenKind::IntegerLiteral);
+        CPRIME_DEBUG_ASSERT(kind_ == TokenKind::IntegerLiteral);
     }
 
     auto kind() const -> TokenKind
@@ -97,15 +97,17 @@ public:
 
     auto string_value() const -> std::string_view
     {
-        assert(kind_ == TokenKind::StringLiteral &&
-               "Token must be a valid string literal.");
+        CPRIME_DEBUG_ASSERT(
+            kind_ == TokenKind::StringLiteral,
+            "Token must be a valid string literal.");
         return std::get<std::string>(computed_value_);
     }
 
     auto integer_value() const -> i64
     {
-        assert(kind_ == TokenKind::IntegerLiteral &&
-               "Token must be a valid integer literal.");
+        CPRIME_DEBUG_ASSERT(
+            kind_ == TokenKind::IntegerLiteral,
+            "Token must be a valid integer literal.");
         return std::get<i64>(computed_value_);
     }
 

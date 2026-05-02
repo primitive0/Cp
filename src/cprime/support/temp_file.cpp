@@ -1,10 +1,10 @@
 #include "temp_file.hpp"
 
-#include <cassert>
 #include <fstream>
 #include <random>
 #include <stdexcept>
 #include <system_error>
+#include <cprime/support/contract.hpp>
 
 namespace cprime::support {
 
@@ -64,7 +64,7 @@ auto TempFile::create_temporary_file() -> std::filesystem::path
         }
     }
 
-    assert(false && "Failed to create temporary file.");
+    CPRIME_UNREACHABLE("Failed to create temporary file.");
 }
 
 } // namespace cprime::support

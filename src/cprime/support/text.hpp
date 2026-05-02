@@ -1,8 +1,8 @@
 #ifndef CPRIME_SUPPORT_TEXT_H_
 #define CPRIME_SUPPORT_TEXT_H_
 
-#include <cassert>
 #include <cprime/support/prelude.hpp>
+#include <cprime/support/contract.hpp>
 
 namespace cprime::support::text {
 namespace utf8 {
@@ -45,7 +45,7 @@ inline auto sequence_length(char32_t ch) -> i32
     } else if (ch < 0x110000) {
         return 4;
     } else {
-        assert(false && "ch must be Unicode code point.");
+        CPRIME_UNREACHABLE("'ch' must be Unicode code point.");
     }
 }
 
