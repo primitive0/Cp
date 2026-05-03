@@ -18,7 +18,7 @@
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/TargetParser/Triple.h>
 
-namespace cprime::compiler::codegen_llvm {
+namespace cprime::codegen_llvm {
 
 namespace {
 
@@ -214,4 +214,4 @@ auto generate_executable(
     assert(ret == 0 && "Linking failed");
 }
 
-} // namespace cprime::compiler::codegen_llvm
+} // namespace cprime::codegen_llvm

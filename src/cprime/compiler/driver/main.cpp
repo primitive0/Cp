@@ -42,7 +42,7 @@ auto main(int argc, char* argv[]) -> int
         exe_path = std::filesystem::current_path() / src_path.filename();
         exe_path += ".out";
     }
-    cprime::compiler::codegen_llvm::generate_executable(ast_context, exe_path);
+    cprime::codegen_llvm::generate_executable(ast_context, exe_path);
 
     return 0;
 }
