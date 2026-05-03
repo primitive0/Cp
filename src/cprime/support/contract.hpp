@@ -1,6 +1,7 @@
 #ifndef CPRIME_SUPPORT_CONTRACT_H_
 #define CPRIME_SUPPORT_CONTRACT_H_
 
+#include <cstdio>
 #include <cstdlib>
 #include <format>
 #include <print>
