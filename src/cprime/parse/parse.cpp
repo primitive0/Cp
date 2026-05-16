@@ -1,63 +1,34 @@
 #include "parse.hpp"
 
+#include <algorithm>
 #include <format>
+#include <boost/intrusive/list.hpp>
 #include <cprime/ast/ast.hpp>
 #include <cprime/diagnostics/diagnostic_sink.hpp>
 #include <cprime/lex/lex.hpp>
 #include <cprime/lex/token.hpp>
 #include <cprime/source/source_buffer.hpp>
+#include <cprime/support/contract.hpp>
 
 namespace cprime::parse {
+
+namespace {
 
 using diagnostics::IDiagnosticSink;
 using lex::Lexer;
 using lex::Token;
 using lex::TokenKind;
+using source::LineColumn;
 using source::SourceBuffer;
+using source::SourceSpan;
 
-namespace {
-
-class TokenStream final
+struct SourceMarker
 {
-public:
-    explicit TokenStream(Lexer lexer)
-        : lexer_{std::move(lexer)}
-        , token_{lexer_.next()}
-    {
-    }
-
-    // TODO: handle invalid tokens
-    [[nodiscard]]
-    auto peek() const -> const Token&
-    {
-        return token_;
-    }
-
-    [[nodiscard]]
-    auto skip_newlines_and_peek() -> const Token&
-    {
-        skip_newlines();
-        return peek();
-    }
-
-    auto skip_newlines() -> void
-    {
-        while (peek().kind() == TokenKind::NewLine) {
-            advance();
-        }
-    }
-
-    auto advance() -> void
-    {
-        token_ = lexer_.next();
-    }
-
-private:
-    Lexer lexer_;
-    Token token_;
+    LineColumn location;
+    const char* cbegin;
 };
 
-class ParseAbort final
+class ParsePanic final
 {
 };
 
@@ -65,228 +36,322 @@ class Parser final
 {
 public:
     explicit Parser(
+        ast::AstContext& ast_context,
         const SourceBuffer& source_buffer,
         IDiagnosticSink& diagnostic_sink)
-        : stream_{Lexer{source_buffer, diagnostic_sink}}
+        : ast_context_{&ast_context}
+        , source_buffer_{&source_buffer}
         , diagnostic_sink_{&diagnostic_sink}
+        , lexer_{source_buffer, diagnostic_sink}
+        , token_{lexer_.next()}
+        , capture_span_end_{nullptr}
+        , errors_found_{false}
     {
+        // TODO: remove this dirty hack when NewLine token gets removed
+        if (token_.kind() == TokenKind::NewLine) {
+            advance();
+        }
     }
 
-    auto parse() -> ast::AstContext
+    auto parse() -> bool
     {
-        return ast::AstContext{parse_translation_unit()};
+        ast_context_->set_translation_unit(parse_translation_unit());
+        return !errors_found_;
     }
 
 private:
-    auto parse_translation_unit() -> std::unique_ptr<ast::TranslationUnit>
+    auto parse_translation_unit() -> ast::TranslationUnit*
     {
-        auto tu = std::make_unique<ast::TranslationUnit>();
-        while (stream_.skip_newlines_and_peek().kind() != TokenKind::Eof) {
-            const auto& token = stream_.peek();
-            switch (token.kind()) {
-            case TokenKind::Fn: {
-                stream_.advance();
-                try {
-                    tu->functions.push_back(parse_function_decl());
-                } catch (const ParseAbort&) {
-                    skip_to(TokenKind::Fn);
-                }
-                break;
-            }
-            default: {
-                diagnose_unexpected_token(TokenKind::Fn, token);
-                skip_to(TokenKind::Fn);
-                break;
-            }
+        boost::intrusive::list<ast::FunctionDecl> functions{};
+        while (token_.kind() != TokenKind::Eof) {
+            try {
+                functions.push_back(*parse_function_decl());
+            } catch (const ParsePanic&) {
+                skip_until({TokenKind::Fn});
             }
         }
-        return tu;
+
+        SourceSpan span{
+            *source_buffer_,
+            LineColumn{1, 1},
+            source_buffer_->cbegin(),
+            source_buffer_->cend()};
+        return ast_context_->make<ast::TranslationUnit>(
+            span,
+            std::move(functions));
     }
 
-    auto parse_function_decl() -> std::unique_ptr<ast::Function>
+    auto parse_function_decl() -> ast::FunctionDecl*
     {
-        auto function = std::make_unique<ast::Function>();
+        SourceMarker marker = start_capturing();
+
+        match(TokenKind::Fn);
         parse_type();
-        function->name = expect(TokenKind::Identifier).lexeme();
-        expect(TokenKind::ParenOpen);
-        expect(TokenKind::ParenClose);
-        function->stmts = parse_block();
-        return function;
+        std::string_view name = match(TokenKind::Identifier).lexeme();
+        match(TokenKind::ParenOpen);
+        match(TokenKind::ParenClose);
+        ast::Block* body = parse_block();
+
+        return ast_context_->make<ast::FunctionDecl>(
+            capture_span(marker),
+            name,
+            body);
     }
 
-    auto parse_block() -> std::vector<std::unique_ptr<ast::Stmt>>
+    auto parse_block() -> ast::Block*
     {
-        std::vector<std::unique_ptr<ast::Stmt>> stmts{};
-        // TODO: move to parse_stmt_list or smth else
-        expect(TokenKind::BraceOpen);
-        while (
-            stream_.skip_newlines_and_peek().kind() != TokenKind::BraceClose)
-        //
-        {
-            stmts.push_back(parse_stmt());
+        SourceMarker marker = start_capturing();
+
+        match(TokenKind::BraceOpen);
+
+        boost::intrusive::list<ast::Stmt> stmts{};
+        while (token_.kind() != TokenKind::BraceClose) {
+            try {
+                stmts.push_back(*parse_stmt());
+            } catch (const ParsePanic&) {
+                if (token_.kind() == TokenKind::Eof ||
+                    token_.kind() == TokenKind::Fn)
+                //
+                {
+                    diagnostic_sink_->emit_error(
+                        "expected '}' to close block",
+                        token_.span());
+                    panic();
+                }
+
+                skip_until({
+                    TokenKind::BraceClose,
+                    TokenKind::Semicolon,
+                    TokenKind::Fn,
+                });
+                if (token_.kind() == TokenKind::Semicolon) {
+                    advance();
+                }
+            }
         }
-        stream_.advance();
-        return stmts;
+        advance();
+
+        return ast_context_->make<ast::Block>(
+            capture_span(marker),
+            std::move(stmts));
     }
 
-    auto parse_stmt() -> std::unique_ptr<ast::Stmt>
+    auto parse_stmt() -> ast::Stmt*
     {
-        Token token = stream_.skip_newlines_and_peek();
-        switch (token.kind()) {
+        switch (token_.kind()) {
+        case TokenKind::Semicolon:
+            return parse_empty_stmt();
         case TokenKind::Return:
-            stream_.advance();
             return parse_return_stmt();
         case TokenKind::Identifier:
-            stream_.advance();
-            return parse_call_stmt(token);
-        case TokenKind::Semicolon:
-            stream_.advance();
-            return std::make_unique<ast::EmptyStmt>();
+            return parse_call_stmt();
         default:
             diagnostic_sink_->emit_error(
                 std::format(
                     "unexpected {} at start of statement",
-                    lex::describe(token.kind())),
-                token.span());
-            throw ParseAbort{};
+                    lex::describe(token_.kind())),
+                token_.span());
+            panic();
         }
     }
 
-    auto parse_return_stmt() -> std::unique_ptr<ast::ReturnStmt>
+    auto parse_empty_stmt() -> ast::EmptyStmt*
     {
-        auto return_stmt = std::make_unique<ast::ReturnStmt>();
-        return_stmt->value = parse_expr();
-        expect(TokenKind::Semicolon);
-        return return_stmt;
+        SourceMarker marker = start_capturing();
+
+        match(TokenKind::Semicolon);
+        return ast_context_->make<ast::EmptyStmt>(capture_span(marker));
     }
 
-    auto parse_call_stmt(Token name) -> std::unique_ptr<ast::Stmt>
+    auto parse_return_stmt() -> ast::ReturnStmt*
     {
-        if (name.lexeme() == "print") {
-            return parse_print_stmt();
-        } else if (name.lexeme() == "println") {
-            return parse_println_stmt();
-        } else {
-            diagnostic_sink_->emit_error(
-                std::format("unknown function '{}'", name.lexeme()),
-                name.span());
-            throw ParseAbort{};
+        SourceMarker marker = start_capturing();
+
+        match(TokenKind::Return);
+        ast::Expr* value = parse_expr();
+        match(TokenKind::Semicolon);
+
+        return ast_context_->make<ast::ReturnStmt>(
+            capture_span(marker),
+            value);
+    }
+
+    auto parse_call_stmt() -> ast::CallStmt*
+    {
+        SourceMarker marker = start_capturing();
+
+        std::string_view name = match(TokenKind::Identifier).lexeme();
+        match(TokenKind::ParenOpen);
+        ast::ExprList* args = parse_expr_list(TokenKind::ParenClose);
+        match(TokenKind::ParenClose);
+        match(TokenKind::Semicolon);
+
+        return ast_context_->make<ast::CallStmt>(
+            capture_span(marker),
+            name,
+            args);
+    }
+
+    auto parse_expr_list(TokenKind terminator) -> ast::ExprList*
+    {
+        SourceMarker marker = start_capturing();
+
+        if (token_.kind() == terminator) {
+            return ast_context_->make<ast::ExprList>(
+                capture_span(marker),
+                boost::intrusive::list<ast::Expr>{});
         }
-    }
 
-    auto parse_print_stmt() -> std::unique_ptr<ast::PrintStmt>
-    {
-        auto call = std::make_unique<ast::PrintStmt>();
-        expect(TokenKind::ParenOpen);
-        if (stream_.peek().kind() == TokenKind::ParenClose) {
-            stream_.advance();
-        } else {
-            call->args = parse_expr_list();
-            expect(TokenKind::ParenClose);
-        }
-        expect(TokenKind::Semicolon);
-        return call;
-    }
-
-    auto parse_println_stmt() -> std::unique_ptr<ast::PrintlnStmt>
-    {
-        auto call = std::make_unique<ast::PrintlnStmt>();
-        expect(TokenKind::ParenOpen);
-        if (stream_.peek().kind() == TokenKind::ParenClose) {
-            stream_.advance();
-        } else {
-            call->args = parse_expr_list();
-            expect(TokenKind::ParenClose);
-        }
-        expect(TokenKind::Semicolon);
-        return call;
-    }
-
-    auto parse_expr_list() -> std::vector<std::unique_ptr<ast::Expr>>
-    {
-        std::vector<std::unique_ptr<ast::Expr>> exprs{};
-        exprs.push_back(parse_expr());
+        boost::intrusive::list<ast::Expr> exprs{};
         while (true) {
-            switch (stream_.peek().kind()) {
-            case TokenKind::Comma:
-                stream_.advance();
-                exprs.push_back(parse_expr());
-                break;
-            default:
-                return exprs;
+            // TODO: Реализовать error recovery при разборе выражений.
+            //
+            // Допустим, мы решили реализовать наивный вариант error recovery:
+            //   try {
+            //       exprs.push_back(*parse_expr());
+            //   } catch (const ParsePanic&) {
+            //       skip_until({TokenKind::Comma, terminator});
+            //   }
+            //
+            // Для синхронизации используются токены ',' и некоторая закрывающая
+            // скобка.
+            //
+            // Рассмотрим следующий пример:
+            //   fn Unit foo() {
+            //       println(1 +
+            //   }
+            //   );
+            //
+            // При разборе вызова println() парсер выйдет за границы функции
+            // foo(), что сделает дальнейший синтаксический анализ невозможным.
+
+            exprs.push_back(*parse_expr());
+            if (token_.kind() == terminator) {
+                return ast_context_->make<ast::ExprList>(
+                    capture_span(marker),
+                    std::move(exprs));
             }
+            match(TokenKind::Comma);
         }
     }
 
-    auto parse_expr() -> std::unique_ptr<ast::Expr>
+    auto parse_expr() -> ast::Expr*
     {
-        const auto& token = stream_.peek();
-        if (!token.is_valid()) {
-            throw ParseAbort{};
+        SourceMarker marker = start_capturing();
+
+        if (!token_.is_valid()) {
+            // Ошибка уже диагностирована лексером, поэтому здесь диагностика
+            // не нужна.
+            panic();
         }
-        switch (token.kind()) {
+        switch (token_.kind()) {
         case TokenKind::StringLiteral: {
-            auto string_expr = std::make_unique<ast::StringExpr>();
-            string_expr->value = token.string_value();
-            stream_.advance();
-            return string_expr;
+            std::pmr::string value =
+                ast_context_->make_string(token_.string_value());
+            advance();
+            return ast_context_->make<ast::StringExpr>(
+                capture_span(marker),
+                std::move(value));
         }
+
         case TokenKind::IntegerLiteral: {
-            auto integer_expr = std::make_unique<ast::IntegerExpr>();
-            integer_expr->value = token.integer_value();
-            stream_.advance();
-            return integer_expr;
+            i64 value = token_.integer_value();
+            advance();
+            return ast_context_->make<ast::IntegerExpr>(
+                capture_span(marker),
+                value);
         }
+
         default: {
             diagnostic_sink_->emit_error(
-                std::format("expected expression, but found {}",
-                    lex::describe(token.kind())),
-                token.span());
-            throw ParseAbort{};
+                std::format(
+                    "unexpected {} at start of expression",
+                    lex::describe(token_.kind())),
+                token_.span());
+            panic();
         }
         }
     }
 
-    // parse I32 type
     auto parse_type() -> void
     {
-        Token identifier = expect(TokenKind::Identifier);
-        if (identifier.lexeme() == "I32") {
-            return;
-        } else {
+        Token identifier = match(TokenKind::Identifier);
+        if (identifier.lexeme() != "I32") {
             diagnostic_sink_->emit_error(
                 std::format(
                     "unknown type name '{}'",
                     identifier.lexeme()),
                 identifier.span());
-            throw ParseAbort{};
+            panic();
         }
     }
 
-    auto expect(TokenKind expected) -> Token
+    auto skip_until(std::initializer_list<TokenKind> terminators) -> void
     {
-        Token token = stream_.skip_newlines_and_peek();
-        // Прерываем разбор, игнорируя ошибку. Ошибки, связанные с некорректными
-        // токенами диагностируются лексером.
-        if (!token.is_valid()) {
-            throw ParseAbort{};
+        while (
+            std::ranges::find(terminators, token_.kind()) == terminators.end() &&
+            token_.kind() != TokenKind::Eof)
+        //
+        {
+            advance();
         }
-        if (token.kind() != expected) {
-            diagnose_unexpected_token(expected, token);
-            throw ParseAbort{};
-        }
-        stream_.advance();
-        return token;
     }
 
-    // TODO: better naming
-    auto skip_to(TokenKind target) -> void
+    auto match(TokenKind kind) -> Token
     {
-        TokenKind current = stream_.peek().kind();
-        while (current != target && current != TokenKind::Eof) {
-            stream_.advance();
-            current = stream_.peek().kind();
+        if (token_.kind() != kind) {
+            diagnose_unexpected_token(kind, token_);
+            panic();
         }
+        Token matched = token_;
+        advance();
+        return matched;
+    }
+
+    auto advance() -> void
+    {
+        capture_span_end_ = token_.span().cend();
+        token_ = lexer_.next();
+
+        // TODO: Нужно удалить токен NewLine из лексера и тогда это станет не
+        // нужным.
+        while (token_.kind() == TokenKind::NewLine) {
+            token_ = lexer_.next();
+        }
+    }
+
+    [[noreturn]]
+    auto panic() -> void
+    {
+        errors_found_ = true;
+        throw ParsePanic{};
+    }
+
+    auto start_capturing() -> SourceMarker
+    {
+        // Если узел имеет пустой диапазон, то может случиться так, что
+        // start.cbegin > capture_span_end. Например:
+        //
+        //   foo(  )
+        //       ^^
+        //       ExprList пуст. start.cbegin на ')', capture_span_end на '('.
+        capture_span_end_ = token_.span().cbegin();
+
+        return SourceMarker{
+            token_.span().location(),
+            token_.span().cbegin()};
+    }
+
+    auto capture_span(SourceMarker start) -> SourceSpan
+    {
+        CPRIME_DEBUG_ASSERT(
+            capture_span_end_ != nullptr,
+            "Node span is not being captured.");
+        return SourceSpan{
+            *source_buffer_,
+            start.location,
+            start.cbegin,
+            capture_span_end_};
     }
 
     auto diagnose_unexpected_token(
@@ -303,18 +368,26 @@ private:
     }
 
 private:
-    TokenStream stream_;
+    ast::AstContext* ast_context_;
+    const SourceBuffer* source_buffer_;
     IDiagnosticSink* diagnostic_sink_;
-}; // namespace
+
+    Lexer lexer_;
+
+    Token token_;
+    const char* capture_span_end_;
+    bool errors_found_;
+};
 
 } // namespace
 
-auto parse(
-    const SourceBuffer& source_buffer,
-    IDiagnosticSink& diagnostic_sink)
-    -> ast::AstContext
+auto parse_cprime_source(
+    ast::AstContext& ast_context,
+    diagnostics::IDiagnosticSink& diagnostic_sink,
+    const source::SourceBuffer& source_buffer)
+    -> bool
 {
-    return Parser{source_buffer, diagnostic_sink}.parse();
+    return Parser{ast_context, source_buffer, diagnostic_sink}.parse();
 }
 
 } // namespace cprime::parse

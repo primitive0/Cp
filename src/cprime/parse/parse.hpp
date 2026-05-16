@@ -2,15 +2,18 @@
 #define CPRIME_PARSE_PARSE_H_
 
 #include <cprime/support/prelude.hpp>
-#include <cprime/ast/ast.hpp>
+#include <cprime/ast/ast_context.hpp>
 #include <cprime/diagnostics/diagnostic_sink.hpp>
+#include <cprime/source/source_buffer.hpp>
 
 namespace cprime::parse {
 
-auto parse(
-    const source::SourceBuffer& source_buffer,
-    diagnostics::IDiagnosticSink& diagnostic_sink)
-    -> ast::AstContext;
+[[nodiscard]]
+auto parse_cprime_source(
+    ast::AstContext& ast_context,
+    diagnostics::IDiagnosticSink& diagnostic_sink,
+    const source::SourceBuffer& source_buffer)
+    -> bool;
 
 } // namespace cprime::parse
 

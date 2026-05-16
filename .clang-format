@@ -69,5 +69,7 @@ IncludeCategories:
     Priority: 10
   - Regex: '^<llvm/'
     Priority: 5
+  - Regex: '^<boost/'
+    Priority: 4
   - Regex: '.*'
     Priority: 0

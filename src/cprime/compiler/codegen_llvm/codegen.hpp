@@ -7,6 +7,8 @@
 
 namespace cprime::codegen_llvm {
 
+auto initialize_llvm_targets() -> void;
+
 auto generate_executable(
     ast::AstContext& ast_context,
     const std::filesystem::path& exe_path) -> void;
