@@ -21,7 +21,7 @@ enum class TokenKind {
     BraceOpen,
     BraceClose,
     Semicolon,
-    Comma, // TODO: implement
+    Comma,
 
     // Литералы
     StringLiteral,
