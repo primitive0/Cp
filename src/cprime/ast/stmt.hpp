@@ -3,6 +3,7 @@
 
 #include "expr.hpp"
 #include "node.hpp"
+#include <magic_enum/magic_enum.hpp>
 #include <boost/intrusive/list.hpp>
 #include <cprime/support/prelude.hpp>
 #include <cprime/source/source_buffer.hpp>
@@ -76,32 +77,22 @@ private:
     Expr* value_;
 };
 
-class CallStmt final : public Stmt
+class ExprStmt final : public Stmt
 {
 public:
-    explicit CallStmt(
-        source::SourceSpan span,
-        std::string_view name,
-        ExprList* args)
-        : Stmt{NodeKind::CallStmt, span}
-        , name_{name}
-        , args_{args}
+    explicit ExprStmt(source::SourceSpan span, Expr* expr)
+        : Stmt{NodeKind::ExprStmt, span}
+        , expr_{expr}
     {
     }
 
-    auto name() -> std::string_view
+    auto expr() -> Expr*
     {
-        return name_;
-    }
-
-    auto args() -> ExprList*
-    {
-        return args_;
+        return expr_;
     }
 
 private:
-    std::string_view name_;
-    ExprList* args_;
+    Expr* expr_;
 };
 
 template<typename ReturnType = void>
@@ -111,7 +102,8 @@ protected:
     explicit StmtVisitor() = default;
 
     template<typename Self>
-    auto accept_stmt(this Self&& self, Stmt* stmt) -> ReturnType
+    [[nodiscard]]
+    auto dispatch_stmt(this Self&& self, Stmt* stmt) -> ReturnType
     {
         CPRIME_DEBUG_ASSERT(stmt != nullptr);
 
@@ -124,10 +116,12 @@ protected:
             return call_visit(static_cast<EmptyStmt*>(stmt));
         case NodeKind::ReturnStmt:
             return call_visit(static_cast<ReturnStmt*>(stmt));
-        case NodeKind::CallStmt:
-            return call_visit(static_cast<CallStmt*>(stmt));
+        case NodeKind::ExprStmt:
+            return call_visit(static_cast<ExprStmt*>(stmt));
         default:
-            CPRIME_UNREACHABLE("Unknown statement kind.");
+            CPRIME_UNREACHABLE(
+                "Unknown statement kind NodeKind::{}.",
+                magic_enum::enum_name(stmt->kind()));
         }
     }
 };

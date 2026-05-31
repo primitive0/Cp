@@ -15,6 +15,13 @@ enum class TokenKind {
 
     Identifier,
 
+    // Операторы
+    Plus,
+    Minus,
+    Star,
+    Slash,
+    Percent,
+
     // Пунктуация
     ParenOpen,
     ParenClose,
@@ -122,40 +129,55 @@ private:
     TokenValue computed_value_;
 };
 
+// TODO: Name is too generic. Rename.
+// TODO: return string_view or accept Token instead of TokenKind?
 inline auto describe(TokenKind kind) -> std::string
 {
+    using enum TokenKind;
+
     switch (kind) {
-    case TokenKind::Fn:
+    case Fn:
         return "'fn'";
-    case TokenKind::Return:
+    case Return:
         return "'return'";
 
-    case TokenKind::Identifier:
+    case Identifier:
         return "identifier";
 
-    case TokenKind::ParenOpen:
+    case Plus:
+        return "'+'";
+    case Minus:
+        return "'-'";
+    case Star:
+        return "'*'";
+    case Slash:
+        return "'/'";
+    case Percent:
+        return "'%'";
+
+    case ParenOpen:
         return "'('";
-    case TokenKind::ParenClose:
+    case ParenClose:
         return "')'";
-    case TokenKind::BraceOpen:
+    case BraceOpen:
         return "'{'";
-    case TokenKind::BraceClose:
+    case BraceClose:
         return "'}'";
-    case TokenKind::Semicolon:
+    case Semicolon:
         return "';'";
-    case TokenKind::Comma:
+    case Comma:
         return "','";
 
-    case TokenKind::StringLiteral:
+    case StringLiteral:
         return "string literal";
-    case TokenKind::IntegerLiteral:
+    case IntegerLiteral:
         return "integer literal";
 
-    case TokenKind::NewLine:
+    case NewLine:
         return "newline";
-    case TokenKind::Eof:
+    case Eof:
         return "end of file";
-    case TokenKind::Error:
+    case Error:
         return "invalid token";
     }
 

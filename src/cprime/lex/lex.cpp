@@ -1,7 +1,6 @@
 #include "lex.hpp"
 
 #include <charconv>
-#include <cstdlib>
 #include <format>
 #include <system_error>
 #include <utf8.h>
@@ -74,6 +73,11 @@ auto Lexer::parse_token() -> Token
 
     static constexpr auto kSingleCharTokenTable =
         std::to_array<std::pair<char32_t, TokenKind>>({
+            {U'+', TokenKind::Plus},
+            {U'-', TokenKind::Minus},
+            {U'*', TokenKind::Star},
+            {U'/', TokenKind::Slash},
+            {U'%', TokenKind::Percent},
             {U';', TokenKind::Semicolon},
             {U',', TokenKind::Comma},
             {U'(', TokenKind::ParenOpen},
@@ -266,12 +270,14 @@ auto Lexer::skip_whitespaces_and_comments() -> void
         case U' ':
             advance();
             break;
+
         case U'/':
             if (!try_parse_comment()) {
                 std::ignore = capture();
                 return;
             }
             break;
+
         default:
             std::ignore = capture();
             return;
@@ -281,13 +287,16 @@ auto Lexer::skip_whitespaces_and_comments() -> void
 
 auto Lexer::try_parse_comment() -> bool
 {
-    // FIXME: this function does not support operator "/"
-
-    advance();
-    if (ch_ != U'*') {
-        std::abort();
+    // Текст не может закончиться здесь, так как курсор находится не на символе
+    // переноса строки (перед концом текста обязательно должен быть конец
+    // строки).
+    CPRIME_DEBUG_ASSERT(cursor_end_ != end_);
+    if (*cursor_end_ != '*') {
+        return false;
     }
-    advance();
+    advance(); // '/'
+    advance(); // '*'
+
     while (true) {
         switch (ch_) {
         case kInvalidChar:

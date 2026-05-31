@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <format>
+#include <limits>
+#include <tuple>
 #include <boost/intrusive/list.hpp>
 #include <cprime/ast/ast.hpp>
 #include <cprime/diagnostics/diagnostic_sink.hpp>
@@ -143,15 +145,8 @@ private:
             return parse_empty_stmt();
         case TokenKind::Return:
             return parse_return_stmt();
-        case TokenKind::Identifier:
-            return parse_call_stmt();
         default:
-            diagnostic_sink_->emit_error(
-                std::format(
-                    "unexpected {} at start of statement",
-                    lex::describe(token_.kind())),
-                token_.span());
-            panic();
+            return parse_expr_stmt();
         }
     }
 
@@ -176,20 +171,16 @@ private:
             value);
     }
 
-    auto parse_call_stmt() -> ast::CallStmt*
+    auto parse_expr_stmt() -> ast::ExprStmt*
     {
         SourceMarker marker = start_capturing();
 
-        std::string_view name = match(TokenKind::Identifier).lexeme();
-        match(TokenKind::ParenOpen);
-        ast::ExprList* args = parse_expr_list(TokenKind::ParenClose);
-        match(TokenKind::ParenClose);
+        ast::Expr* expr = parse_expr();
         match(TokenKind::Semicolon);
 
-        return ast_context_->make<ast::CallStmt>(
+        return ast_context_->make<ast::ExprStmt>(
             capture_span(marker),
-            name,
-            args);
+            expr);
     }
 
     auto parse_expr_list(TokenKind terminator) -> ast::ExprList*
@@ -237,8 +228,126 @@ private:
 
     auto parse_expr() -> ast::Expr*
     {
+        return parse_expr_bp(0);
+    }
+
+    auto parse_expr_bp(i32 min_bp) -> ast::Expr*
+    {
+        // Реализуем разбор бинарных выражений, используя Pratt parsing, также
+        // известный как precedence climbing (хотя Википедия почему-то считает
+        // иначе, см. https://www.oilshell.org/blog/2016/11/01.html).
+        //
+        // bp --- это binding power (сила связи). Для поддержки правой
+        // ассоциативности каждому бинарному оператору сопоставляется два вида
+        // силы связи: левая (l_bp) и правая (r_bp).
+        //
+        // Преимущества перед реализацией в стиле рекурсивного спуска таковы:
+        // 1. Проще добавлять новые операторы.
+        // 2. Меньше рекурсивных вызовов функций.
+        //
+        // Подробнее об алгоритме можно узнать в этой статье:
+        // https://matklad.github.io/2020/04/13/simple-but-powerful-pratt-parsing.html
+
+        auto get_binary_op_bp = [](TokenKind kind)
+            -> std::tuple<ast::BinaryOp, i32, i32> {
+            switch (kind) {
+            case TokenKind::Plus:
+                return {ast::BinaryOp::Add, 1, 2};
+            case TokenKind::Minus:
+                return {ast::BinaryOp::Sub, 1, 2};
+            case TokenKind::Star:
+                return {ast::BinaryOp::Mul, 3, 4};
+            case TokenKind::Slash:
+                return {ast::BinaryOp::Div, 3, 4};
+            case TokenKind::Percent:
+                return {ast::BinaryOp::Modulo, 3, 4};
+            default:
+                // Токен не является бинарным оператором. Возвращаем l_bp = -1,
+                // чтобы завершить разбор бинарного выражения.
+                return {ast::BinaryOp{}, -1, 0};
+            }
+        };
+
         SourceMarker marker = start_capturing();
 
+        ast::Expr* lhs = parse_prefix_expr();
+        while (true) {
+            auto [op, l_bp, r_bp] = get_binary_op_bp(token_.kind());
+
+            // Программист должен решать, какую ассоциативность имеют операторы
+            // и как связываются операнды с операторами. Равенство l_bp и min_bp
+            // не допустимо.
+            CPRIME_DEBUG_ASSERT(
+                l_bp != min_bp,
+                "Parsing expression is ambiguous.");
+
+            if (l_bp < min_bp) {
+                break;
+            }
+
+            advance();
+            ast::Expr* rhs = parse_expr_bp(r_bp);
+
+            lhs = ast_context_->make<ast::BinaryExpr>(
+                capture_span(marker),
+                op,
+                lhs,
+                rhs);
+        }
+        return lhs;
+    }
+
+    auto parse_prefix_expr() -> ast::Expr*
+    {
+        SourceMarker marker = start_capturing();
+
+        switch (token_.kind()) {
+        case TokenKind::Minus: {
+            advance();
+            ast::Expr* operand = parse_prefix_expr();
+
+            return ast_context_->make<ast::UnaryExpr>(
+                capture_span(marker),
+                ast::UnaryOp::Minus,
+                operand);
+        }
+
+        default: {
+            return parse_primary_expr();
+        }
+        }
+    }
+
+    auto parse_primary_expr() -> ast::Expr*
+    {
+        SourceMarker marker = start_capturing();
+
+        if (token_.kind() == TokenKind::Identifier) {
+            std::string_view name = token_.lexeme();
+            advance();
+
+            if (token_.kind() != TokenKind::ParenOpen) {
+                return ast_context_->make<ast::NameExpr>(
+                    capture_span(marker),
+                    name);
+            }
+
+            // TODO: исправить грамматику, чтобы соответствовала комментарию.
+            //
+            // Вызов функции в C' является первичным выражением, поэтому
+            // обрабатываем его здесь.
+            advance();
+            ast::ExprList* args = parse_expr_list(TokenKind::ParenClose);
+            match(TokenKind::ParenClose);
+
+            return ast_context_->make<ast::CallExpr>(
+                capture_span(marker),
+                name,
+                args);
+        }
+
+        // Токены строковых и целочисленных литералов могут быть невалидными.
+        // Это нужно учесть.
         if (!token_.is_valid()) {
             // Ошибка уже диагностирована лексером, поэтому здесь диагностика
             // не нужна.
@@ -257,9 +366,16 @@ private:
         case TokenKind::IntegerLiteral: {
             i64 value = token_.integer_value();
             advance();
+
+            // TODO: Сделать нормальную диагностику.
+            constexpr i32 kI32Min = std::numeric_limits<i32>::min();
+            constexpr i32 kI32Max = std::numeric_limits<i32>::max();
+            CPRIME_DEBUG_ASSERT(kI32Min <= value && value <= kI32Max);
+            i32 value_i32 = static_cast<i32>(value);
+
             return ast_context_->make<ast::IntegerExpr>(
                 capture_span(marker),
-                value);
+                value_i32);
         }
 
         default: {

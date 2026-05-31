@@ -3,4 +3,5 @@ target_link_libraries(cprime_ast
   INTERFACE
     cprime_headers
     cprime_support
-    Boost::headers)
+    Boost::headers
+    magic_enum::magic_enum)

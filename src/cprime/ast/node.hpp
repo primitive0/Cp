@@ -12,10 +12,14 @@ enum class NodeKind {
     Block,
     EmptyStmt,
     ReturnStmt,
-    CallStmt,
+    ExprStmt,
     ExprList,
     StringExpr,
     IntegerExpr,
+    NameExpr,
+    CallExpr,
+    UnaryExpr,
+    BinaryExpr,
 };
 
 class Node

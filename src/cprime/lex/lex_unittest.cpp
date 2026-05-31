@@ -290,6 +290,76 @@ TEST_CASE("Can lex identifiers", "[cprime][lex]")
     REQUIRE(!diagnostic_recorder.has_errors());
 }
 
+TEST_CASE("Can lex operators", "[cprime][lex]")
+{
+    struct TC
+    {
+        std::string_view input;
+        std::vector<ExpectedToken> expected;
+    };
+
+    auto test_case = GENERATE(
+        TC{
+            "+\n",
+            {
+                {TokenKind::Plus, "+", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "-\n",
+            {
+                {TokenKind::Minus, "-", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "*\n",
+            {
+                {TokenKind::Star, "*", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "/\n",
+            {
+                {TokenKind::Slash, "/", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "%\n",
+            {
+                {TokenKind::Percent, "%", LineColumn{1, 1}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 2}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        },
+        TC{
+            "+-*/%\n",
+            {
+                {TokenKind::Plus, "+", LineColumn{1, 1}},
+                {TokenKind::Minus, "-", LineColumn{1, 2}},
+                {TokenKind::Star, "*", LineColumn{1, 3}},
+                {TokenKind::Slash, "/", LineColumn{1, 4}},
+                {TokenKind::Percent, "%", LineColumn{1, 5}},
+                {TokenKind::NewLine, "\n", LineColumn{1, 6}},
+                {TokenKind::Eof, "", LineColumn{2, 1}},
+            },
+        });
+
+    diagnostics::DiagnosticRecorder diagnostic_recorder{};
+    LexHelper lex_helper{};
+    REQUIRE_THAT(
+        lex_helper.run(test_case.input, diagnostic_recorder),
+        RangeEquals(test_case.expected));
+    REQUIRE(!diagnostic_recorder.has_errors());
+}
+
 TEST_CASE("Can lex punctuation", "[cprime][lex]")
 {
     struct TC

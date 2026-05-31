@@ -57,4 +57,7 @@ template<typename... Args>
 #define CPRIME_UNREACHABLE(...) \
     CPRIME_ASSERT(false __VA_OPT__(, ) __VA_ARGS__)
 
+#define CPRIME_WIP() \
+    CPRIME_UNREACHABLE("Work-in-progress.")
+
 #endif // CPRIME_SUPPORT_CONTRACT_H_
