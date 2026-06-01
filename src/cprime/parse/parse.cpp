@@ -405,7 +405,7 @@ private:
     auto skip_until(std::initializer_list<TokenKind> terminators) -> void
     {
         while (
-            std::ranges::find(terminators, token_.kind()) == terminators.end() &&
+            !std::ranges::contains(terminators, token_.kind()) &&
             token_.kind() != TokenKind::Eof)
         //
         {
