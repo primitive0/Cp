@@ -57,7 +57,7 @@ auto generate_executable(
 
     std::error_code ec;
     llvm::raw_fd_ostream dest(obj_path.string(), ec, llvm::sys::fs::OF_None);
-    assert(!ec && "Could not open object file for writing");
+    CPRIME_ASSERT(!ec, "Could not open object file for writing");
 
     llvm::legacy::PassManager pm;
     const auto failed = machine->addPassesToEmitFile(
