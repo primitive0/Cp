@@ -1,10 +1,10 @@
 #include "lex.hpp"
 
 #include <iomanip>
-#include <magic_enum/magic_enum.hpp>
 #include <ostream>
 #include <type_traits>
 #include <variant>
+#include <magic_enum/magic_enum.hpp>
 #include <cprime/support/prelude.hpp>
 #include <cprime/diagnostics/diagnostic_recorder.hpp>
 #include <cprime/diagnostics/diagnostic_sink.hpp>
