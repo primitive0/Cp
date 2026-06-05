@@ -45,20 +45,20 @@ jobs:
       - name: Install dependencies
         run: >
           conan install
-            --build=missing
-            -s build_type=${{ matrix.build_type }}
-            .
+          --build=missing
+          -s build_type=${{ matrix.build_type }}
+          .
 
       # TODO: support different build profiles
       - name: Configure CMake
         run: >
           cmake
-            -S .
-            -B build/
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-            -DCMAKE_TOOLCHAIN_FILE=build/generators/conan_toolchain.cmake
-            -DLLVM_DIR=/usr/lib/llvm-22/lib/cmake/llvm
-            -DCMAKE_PROGRAM_PATH=/usr/lib/llvm-22/bin
+          -S .
+          -B build/
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DCMAKE_TOOLCHAIN_FILE=build/generators/conan_toolchain.cmake
+          -DLLVM_DIR=/usr/lib/llvm-22/lib/cmake/llvm
+          -DCMAKE_PROGRAM_PATH=/usr/lib/llvm-22/bin
 
       - name: Build
         run: make build
