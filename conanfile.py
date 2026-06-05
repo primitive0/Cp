@@ -6,7 +6,7 @@ class CPrimeConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
 
     requires = (
-        "catch2/3.13.0",
+        "catch2/3.15.0",
         "utfcpp/4.0.9",
         "magic_enum/0.9.7",
         "boost/1.91.0",
