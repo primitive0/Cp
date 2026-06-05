@@ -1,6 +1,7 @@
 add_subdirectory(support/)
 add_subdirectory(source/)
 add_subdirectory(diagnostics/)
+add_subdirectory(testing/)
 add_subdirectory(lex/)
 add_subdirectory(ast/)
 add_subdirectory(parse/)

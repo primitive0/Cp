@@ -18,6 +18,7 @@ include(IPOSupport)
 find_package(magic_enum REQUIRED)
 find_package(utf8cpp REQUIRED)
 find_package(Boost REQUIRED)
+find_package(cxxopts REQUIRED)
 
 find_package(Catch2 REQUIRED)
 include(Catch)

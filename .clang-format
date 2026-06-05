@@ -71,6 +71,8 @@ IncludeCategories:
     Priority: 5
   - Regex: '^<boost/'
     Priority: 4
+  - Regex: '<cxxopts\.hpp>'
+    Priority: 3
   - Regex: '<magic_enum/'
     Priority: 2
   - Regex: '.*'
