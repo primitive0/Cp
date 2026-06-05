@@ -310,7 +310,7 @@ private:
 private:
     std::ostream& os_;
     i32 depth_;
-    std::unordered_set<i32> active_tree_guides_{};
+    std::unordered_set<i32> active_tree_guides_;
 
     // TODO: можно улучшить производительность tree guides, используя стек
     // булов.
