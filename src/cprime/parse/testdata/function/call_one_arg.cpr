@@ -1,0 +1,4 @@
+fn I32 main() {
+    print_i32(42);
+    return 0;
+}

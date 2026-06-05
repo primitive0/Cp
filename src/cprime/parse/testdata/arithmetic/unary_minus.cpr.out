@@ -1,0 +1,15 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    `-ReturnStmt <2:5>
+      `-BinaryExpr <2:12> +
+        |-UnaryExpr <2:12> -
+        | `-IntegerExpr <2:13> 1
+        `-BinaryExpr <2:17> *
+          |-UnaryExpr <2:17> -
+          | `-NameExpr <2:18> x
+          `-UnaryExpr <2:22> -
+            `-CallExpr <2:23> foo
+              `-ExprList <2:27>

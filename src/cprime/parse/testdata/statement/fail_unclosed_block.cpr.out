@@ -1,0 +1,4 @@
+ERROR
+
+Error <3:1> "unexpected end of file at start of expression"
+Error <3:1> "expected '}' to close block"

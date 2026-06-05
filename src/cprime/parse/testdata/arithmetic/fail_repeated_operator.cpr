@@ -1,0 +1,3 @@
+fn I32 main() {
+    return 1 ** 2;
+}

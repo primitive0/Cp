@@ -1,0 +1,4 @@
+fn I32 main() {
+    println("text");
+    return 0;
+}

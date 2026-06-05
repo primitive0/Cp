@@ -1,0 +1,17 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    `-ReturnStmt <2:5>
+      `-BinaryExpr <2:12> -
+        |-BinaryExpr <2:12> +
+        | |-IntegerExpr <2:12> 1
+        | `-BinaryExpr <2:16> *
+        |   |-IntegerExpr <2:16> 2
+        |   `-IntegerExpr <2:20> 3
+        `-BinaryExpr <2:24> %
+          |-BinaryExpr <2:24> /
+          | |-IntegerExpr <2:24> 4
+          | `-IntegerExpr <2:28> 2
+          `-IntegerExpr <2:32> 2

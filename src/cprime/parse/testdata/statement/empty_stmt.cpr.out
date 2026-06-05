@@ -1,0 +1,9 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    |-EmptyStmt <2:5>
+    |-EmptyStmt <3:5>
+    `-ReturnStmt <4:5>
+      `-IntegerExpr <4:12> 0

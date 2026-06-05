@@ -1,0 +1,13 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    |-ExprStmt <2:5>
+    | `-CallExpr <2:5> sum
+    |   `-ExprList <2:9>
+    |     |-IntegerExpr <2:9> 1
+    |     |-IntegerExpr <2:12> 2
+    |     `-IntegerExpr <2:15> 3
+    `-ReturnStmt <3:5>
+      `-IntegerExpr <3:12> 0

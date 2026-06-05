@@ -1,0 +1,5 @@
+fn I32 main() {
+    println("line\nnext\tindent");
+    return 0;
+}
+

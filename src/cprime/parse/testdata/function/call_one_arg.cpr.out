@@ -1,0 +1,11 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    |-ExprStmt <2:5>
+    | `-CallExpr <2:5> print_i32
+    |   `-ExprList <2:15>
+    |     `-IntegerExpr <2:15> 42
+    `-ReturnStmt <3:5>
+      `-IntegerExpr <3:12> 0

@@ -1,0 +1,8 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    `-ReturnStmt <2:5>
+      `-CallExpr <2:12> compute
+        `-ExprList <2:20>

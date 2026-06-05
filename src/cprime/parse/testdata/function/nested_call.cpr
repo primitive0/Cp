@@ -1,0 +1,4 @@
+fn I32 main() {
+    log(add(1, mul(2, 3)));
+    return 0;
+}

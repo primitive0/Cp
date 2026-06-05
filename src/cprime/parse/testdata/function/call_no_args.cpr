@@ -1,0 +1,4 @@
+fn I32 main() {
+    tick();
+    return 0;
+}
