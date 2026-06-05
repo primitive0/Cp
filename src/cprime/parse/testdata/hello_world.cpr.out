@@ -1,0 +1,11 @@
+SUCCESS
+
+TranslationUnit <1:1>
+`-FunctionDecl <1:1> main
+  `-Block <1:15>
+    |-ExprStmt <2:5>
+    | `-CallExpr <2:5> println @builtin
+    |   `-ExprList <2:13>
+    |     `-StringExpr <2:13> "Hello, world!"
+    `-ReturnStmt <3:5>
+      `-IntegerExpr <3:12> 0

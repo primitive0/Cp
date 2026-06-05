@@ -140,6 +140,12 @@ public:
         return callee_kind_;
     }
 
+    // TODO: remove
+    auto is_builtin_call() -> bool
+    {
+        return callee_kind() != CalleeKind::Function;
+    }
+
 private:
     static auto get_callee_kind(std::string_view callee) -> CalleeKind
     {

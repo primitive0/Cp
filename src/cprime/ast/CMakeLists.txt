@@ -1,6 +1,7 @@
-add_library(cprime_ast INTERFACE)
+add_library(cprime_ast STATIC
+  dump.cpp)
 target_link_libraries(cprime_ast
-  INTERFACE
+  PUBLIC
     cprime_headers
     cprime_support
     Boost::headers
