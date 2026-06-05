@@ -155,6 +155,7 @@ private:
         SourceMarker marker = start_capturing();
 
         match(TokenKind::Semicolon);
+
         return ast_context_->make<ast::EmptyStmt>(capture_span(marker));
     }
 
