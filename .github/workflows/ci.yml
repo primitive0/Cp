@@ -63,5 +63,5 @@ jobs:
       - name: Build
         run: make build
 
-      - name: Test C'
+      - name: Test
         run: make test
