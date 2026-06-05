@@ -42,7 +42,7 @@ template<typename... Args>
     ((condition)                                         \
             ? (void)0                                    \
             : ::cprime::support::detail::fail_assertion( \
-                  std::source_location::current() __VA_OPT__(, ) __VA_ARGS__))
+                  ::std::source_location::current() __VA_OPT__(, ) __VA_ARGS__))
 
 #ifndef NDEBUG
 #define CPRIME_DEBUG_ASSERT(condition, ...) \
