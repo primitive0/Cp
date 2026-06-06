@@ -1,0 +1,43 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> add_sub
+| `-Block <1:18>
+|   `-ReturnStmt <2:5>
+|     `-BinaryExpr <2:12> -
+|       |-BinaryExpr <2:12> +
+|       | |-IntegerExpr <2:12> 1
+|       | `-IntegerExpr <2:16> 2
+|       `-IntegerExpr <2:20> 3
+|-FunctionDecl <5:1> mul_div_mod
+| `-Block <5:22>
+|   `-ReturnStmt <6:5>
+|     `-BinaryExpr <6:12> %
+|       |-BinaryExpr <6:12> /
+|       | |-BinaryExpr <6:12> *
+|       | | |-IntegerExpr <6:12> 20
+|       | | `-IntegerExpr <6:17> 3
+|       | `-IntegerExpr <6:21> 2
+|       `-IntegerExpr <6:25> 7
+|-FunctionDecl <9:1> precedence
+| `-Block <9:21>
+|   `-ReturnStmt <10:5>
+|     `-BinaryExpr <10:12> -
+|       |-BinaryExpr <10:12> +
+|       | |-IntegerExpr <10:12> 1
+|       | `-BinaryExpr <10:16> *
+|       |   |-IntegerExpr <10:16> 2
+|       |   `-IntegerExpr <10:20> 3
+|       `-BinaryExpr <10:24> %
+|         |-BinaryExpr <10:24> /
+|         | |-IntegerExpr <10:24> 4
+|         | `-IntegerExpr <10:28> 2
+|         `-IntegerExpr <10:32> 2
+`-FunctionDecl <13:1> left_associative
+  `-Block <13:27>
+    `-ReturnStmt <14:5>
+      `-BinaryExpr <14:12> -
+        |-BinaryExpr <14:12> -
+        | |-IntegerExpr <14:12> 10
+        | `-IntegerExpr <14:17> 3
+        `-IntegerExpr <14:21> 2

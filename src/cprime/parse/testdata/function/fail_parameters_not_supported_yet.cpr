@@ -1,3 +1,0 @@
-fn I32 add(I32 x) {
-    return x;
-}

@@ -1,0 +1,6 @@
+fn I32 empty() {
+}
+
+fn I32 main() {
+    return 0;
+}

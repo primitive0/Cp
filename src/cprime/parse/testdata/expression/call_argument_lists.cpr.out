@@ -1,0 +1,52 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> empty_args
+| `-Block <1:21>
+|   |-ExprStmt <2:5>
+|   | `-CallExpr <2:5> foo
+|   |   `-ExprList <2:9>
+|   `-ReturnStmt <3:5>
+|     `-IntegerExpr <3:12> 0
+|-FunctionDecl <6:1> one_arg
+| `-Block <6:18>
+|   |-ExprStmt <7:5>
+|   | `-CallExpr <7:5> foo
+|   |   `-ExprList <7:9>
+|   |     `-IntegerExpr <7:9> 1
+|   `-ReturnStmt <8:5>
+|     `-IntegerExpr <8:12> 0
+|-FunctionDecl <11:1> many_args
+| `-Block <11:20>
+|   |-ExprStmt <12:5>
+|   | `-CallExpr <12:5> foo
+|   |   `-ExprList <12:9>
+|   |     |-IntegerExpr <12:9> 1
+|   |     |-NameExpr <12:12> two
+|   |     `-CallExpr <12:17> three
+|   |       `-ExprList <12:23>
+|   `-ReturnStmt <13:5>
+|     `-IntegerExpr <13:12> 0
+|-FunctionDecl <16:1> expression_args
+| `-Block <16:26>
+|   |-ExprStmt <17:5>
+|   | `-CallExpr <17:5> foo
+|   |   `-ExprList <17:9>
+|   |     |-BinaryExpr <17:9> +
+|   |     | |-IntegerExpr <17:9> 1
+|   |     | `-IntegerExpr <17:13> 2
+|   |     |-BinaryExpr <17:16> *
+|   |     | |-IntegerExpr <17:16> 3
+|   |     | `-IntegerExpr <17:20> 4
+|   |     `-UnaryExpr <17:23> -
+|   |       `-IntegerExpr <17:24> 5
+|   `-ReturnStmt <18:5>
+|     `-IntegerExpr <18:12> 0
+`-FunctionDecl <21:1> expression_args
+  `-Block <21:26>
+    |-ExprStmt <22:5>
+    | `-CallExpr <22:5> println @builtin
+    |   `-ExprList <22:13>
+    |     `-StringExpr <22:13> "Hello world!"
+    `-ReturnStmt <23:5>
+      `-IntegerExpr <23:12> 0

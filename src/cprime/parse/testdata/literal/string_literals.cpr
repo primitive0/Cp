@@ -1,0 +1,14 @@
+fn I32 plain_string() {
+    println("text");
+    return 0;
+}
+
+fn I32 escaped_string() {
+    println("line\nnext\tindent");
+    return 0;
+}
+
+fn I32 hello_world() {
+    println("Hello, world!");
+    return 0;
+}

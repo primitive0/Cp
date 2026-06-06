@@ -1,5 +1,0 @@
-fn I32 main() {
-    println("bad \x escape");
-    return 0;
-}
-

@@ -1,4 +1,0 @@
-fn I32 main() {
-    foo(1, two, three());
-    return 0;
-}

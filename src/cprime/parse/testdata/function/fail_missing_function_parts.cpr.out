@@ -1,0 +1,4 @@
+ERROR
+
+Error <1:8> "expected identifier, but found '('"
+Error <9:4> "unknown type name 'main'"

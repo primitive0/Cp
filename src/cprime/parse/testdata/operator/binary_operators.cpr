@@ -1,0 +1,15 @@
+fn I32 add_sub() {
+    return 1 + 2 - 3;
+}
+
+fn I32 mul_div_mod() {
+    return 20 * 3 / 2 % 7;
+}
+
+fn I32 precedence() {
+    return 1 + 2 * 3 - 4 / 2 % 2;
+}
+
+fn I32 left_associative() {
+    return 10 - 3 - 2;
+}

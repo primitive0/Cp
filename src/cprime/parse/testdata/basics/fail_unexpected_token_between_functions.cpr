@@ -1,9 +1,0 @@
-fn I32 first() {
-    return 1;
-}
-
-}
-
-fn I32 second() {
-    return 2;
-}

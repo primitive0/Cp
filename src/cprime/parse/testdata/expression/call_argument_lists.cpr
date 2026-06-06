@@ -1,0 +1,24 @@
+fn I32 empty_args() {
+    foo();
+    return 0;
+}
+
+fn I32 one_arg() {
+    foo(1);
+    return 0;
+}
+
+fn I32 many_args() {
+    foo(1, two, three());
+    return 0;
+}
+
+fn I32 expression_args() {
+    foo(1 + 2, 3 * 4, -5);
+    return 0;
+}
+
+fn I32 expression_args() {
+    println("Hello world!");
+    return 0;
+}

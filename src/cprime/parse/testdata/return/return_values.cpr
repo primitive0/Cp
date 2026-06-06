@@ -1,0 +1,15 @@
+fn I32 return_integer() {
+    return 123;
+}
+
+fn I32 return_name() {
+    return result;
+}
+
+fn I32 return_call() {
+    return compute();
+}
+
+fn I32 return_arithmetic() {
+    return 1 + 2 * 3;
+}

@@ -1,0 +1,5 @@
+ERROR
+
+Error <2:12> "unexpected '*' at start of expression"
+Error <6:16> "unexpected ';' at start of expression"
+Error <10:15> "unexpected '*' at start of expression"

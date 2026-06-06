@@ -1,0 +1,11 @@
+fn I32 missing_lhs() {
+    return * 2;
+}
+
+fn I32 missing_rhs() {
+    return 1 + ;
+}
+
+fn I32 repeated_operator() {
+    return 1 ** 2;
+}

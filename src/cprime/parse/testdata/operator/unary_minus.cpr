@@ -1,0 +1,15 @@
+fn I32 negative_integer() {
+    return -1;
+}
+
+fn I32 negative_name() {
+    return -x;
+}
+
+fn I32 negative_call_result() {
+    return -foo();
+}
+
+fn I32 mixed_unary_and_binary() {
+    return -1 + -x * -foo();
+}

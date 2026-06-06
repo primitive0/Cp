@@ -1,0 +1,9 @@
+fn I32 invalid_escape_sequence() {
+    println("bad \x escape");
+    return 0;
+}
+
+fn I32 unterminated_string() {
+    println("unterminated);
+    return 0;
+}

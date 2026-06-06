@@ -1,0 +1,11 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> zero
+| `-Block <1:15>
+|   `-ReturnStmt <2:5>
+|     `-IntegerExpr <2:12> 0
+`-FunctionDecl <5:1> max_i32
+  `-Block <5:18>
+    `-ReturnStmt <6:5>
+      `-IntegerExpr <6:12> 2147483647
