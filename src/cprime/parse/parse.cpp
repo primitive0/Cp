@@ -375,7 +375,7 @@ private:
             // TODO: Сделать нормальную диагностику.
             constexpr i32 kI32Min = std::numeric_limits<i32>::min();
             constexpr i32 kI32Max = std::numeric_limits<i32>::max();
-            CPRIME_DEBUG_ASSERT(kI32Min <= value && value <= kI32Max);
+            CPRIME_ASSERT(kI32Min <= value && value <= kI32Max);
             i32 value_i32 = static_cast<i32>(value);
 
             return ast_context_->make<ast::IntegerExpr>(
