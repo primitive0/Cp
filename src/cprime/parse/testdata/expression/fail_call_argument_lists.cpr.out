@@ -1,0 +1,6 @@
+ERROR
+
+Error <2:12> "unexpected ',' at start of expression"
+Error <7:11> "unexpected ')' at start of expression"
+Error <12:11> "expected ',', but found integer literal"
+Error <17:13> "expected ',', but found ';'"

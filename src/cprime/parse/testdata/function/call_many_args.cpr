@@ -1,4 +1,0 @@
-fn I32 main() {
-    sum(1, 2, 3);
-    return 0;
-}

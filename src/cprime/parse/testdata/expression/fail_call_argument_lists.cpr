@@ -1,0 +1,19 @@
+fn I32 empty_middle_arg() {
+    foo(1, , 3);
+    return 0;
+}
+
+fn I32 trailing_comma() {
+    foo(1,);
+    return 0;
+}
+
+fn I32 missing_comma() {
+    foo(1 2);
+    return 0;
+}
+
+fn I32 missing_close_paren() {
+    foo(1, 2;
+    return 0;
+}

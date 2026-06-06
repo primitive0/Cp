@@ -1,0 +1,11 @@
+fn I32 () {
+    return 0;
+}
+
+I32 missing_fn_keyword() {
+    return 0;
+}
+
+fn main() {
+    return 0;
+}

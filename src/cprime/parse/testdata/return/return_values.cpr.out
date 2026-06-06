@@ -1,0 +1,24 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> return_integer
+| `-Block <1:25>
+|   `-ReturnStmt <2:5>
+|     `-IntegerExpr <2:12> 123
+|-FunctionDecl <5:1> return_name
+| `-Block <5:22>
+|   `-ReturnStmt <6:5>
+|     `-NameExpr <6:12> result
+|-FunctionDecl <9:1> return_call
+| `-Block <9:22>
+|   `-ReturnStmt <10:5>
+|     `-CallExpr <10:12> compute
+|       `-ExprList <10:20>
+`-FunctionDecl <13:1> return_arithmetic
+  `-Block <13:28>
+    `-ReturnStmt <14:5>
+      `-BinaryExpr <14:12> +
+        |-IntegerExpr <14:12> 1
+        `-BinaryExpr <14:16> *
+          |-IntegerExpr <14:16> 2
+          `-IntegerExpr <14:20> 3

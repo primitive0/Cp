@@ -1,0 +1,13 @@
+fn I32 missing_paren_open) {
+    return 0;
+}
+
+fn I32 missing_paren_close( {
+    return 0;
+}
+
+fn I32 missing_body()
+    return 0;
+
+fn I32 unclosed_body() {
+    return 0;

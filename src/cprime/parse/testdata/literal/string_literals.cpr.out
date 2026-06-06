@@ -1,0 +1,27 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> plain_string
+| `-Block <1:23>
+|   |-ExprStmt <2:5>
+|   | `-CallExpr <2:5> println @builtin
+|   |   `-ExprList <2:13>
+|   |     `-StringExpr <2:13> "text"
+|   `-ReturnStmt <3:5>
+|     `-IntegerExpr <3:12> 0
+|-FunctionDecl <6:1> escaped_string
+| `-Block <6:25>
+|   |-ExprStmt <7:5>
+|   | `-CallExpr <7:5> println @builtin
+|   |   `-ExprList <7:13>
+|   |     `-StringExpr <7:13> "line\nnext\tindent"
+|   `-ReturnStmt <8:5>
+|     `-IntegerExpr <8:12> 0
+`-FunctionDecl <11:1> hello_world
+  `-Block <11:22>
+    |-ExprStmt <12:5>
+    | `-CallExpr <12:5> println @builtin
+    |   `-ExprList <12:13>
+    |     `-StringExpr <12:13> "Hello, world!"
+    `-ReturnStmt <13:5>
+      `-IntegerExpr <13:12> 0

@@ -1,0 +1,31 @@
+SUCCESS
+
+TranslationUnit <1:1>
+|-FunctionDecl <1:1> negative_integer
+| `-Block <1:27>
+|   `-ReturnStmt <2:5>
+|     `-UnaryExpr <2:12> -
+|       `-IntegerExpr <2:13> 1
+|-FunctionDecl <5:1> negative_name
+| `-Block <5:24>
+|   `-ReturnStmt <6:5>
+|     `-UnaryExpr <6:12> -
+|       `-NameExpr <6:13> x
+|-FunctionDecl <9:1> negative_call_result
+| `-Block <9:31>
+|   `-ReturnStmt <10:5>
+|     `-UnaryExpr <10:12> -
+|       `-CallExpr <10:13> foo
+|         `-ExprList <10:17>
+`-FunctionDecl <13:1> mixed_unary_and_binary
+  `-Block <13:33>
+    `-ReturnStmt <14:5>
+      `-BinaryExpr <14:12> +
+        |-UnaryExpr <14:12> -
+        | `-IntegerExpr <14:13> 1
+        `-BinaryExpr <14:17> *
+          |-UnaryExpr <14:17> -
+          | `-NameExpr <14:18> x
+          `-UnaryExpr <14:22> -
+            `-CallExpr <14:23> foo
+              `-ExprList <14:27>

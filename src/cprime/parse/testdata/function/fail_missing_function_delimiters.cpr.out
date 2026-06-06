@@ -1,0 +1,7 @@
+ERROR
+
+Error <1:26> "expected '(', but found ')'"
+Error <5:29> "expected ')', but found '{'"
+Error <10:5> "expected '{', but found 'return'"
+Error <14:1> "unexpected end of file at start of expression"
+Error <14:1> "expected '}' to close block"
