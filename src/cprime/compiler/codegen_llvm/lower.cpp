@@ -140,7 +140,7 @@ private:
 
     auto emit_println_call(ast::ExprList* args) -> llvm::Value*
     {
-        std::ignore = emit_print_call(args);
+        emit_print_call(args);
         builder_.CreateCall(
             get_puts_ir_callee(),
             {
