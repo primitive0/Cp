@@ -1,0 +1,19 @@
+fn I32 empty_if_block() {
+    if (1) {
+    }
+    return 0;
+}
+
+fn I32 if_with_return() {
+    if (1) {
+        return 1;
+    }
+    return 0;
+}
+
+fn I32 if_with_expression_statement() {
+    if (condition) {
+        println(1);
+    }
+    return 0;
+}

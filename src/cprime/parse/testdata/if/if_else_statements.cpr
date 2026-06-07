@@ -1,0 +1,28 @@
+fn I32 if_else() {
+    if (condition) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+fn I32 if_else_if() {
+    if (first) {
+        return 1;
+    } else if (second) {
+        return 2;
+    }
+    return 0;
+}
+
+fn I32 if_else_if_else() {
+    if (first) {
+        return 1;
+    } else if (second) {
+        return 2;
+    } else if (third) {
+        return 3;
+    } else {
+        return 0;
+    }
+}

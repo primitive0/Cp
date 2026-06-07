@@ -1,0 +1,22 @@
+fn I32 nested_if() {
+    if (outer) {
+        if (inner) {
+            return 1;
+        }
+        return 2;
+    }
+    return 0;
+}
+
+fn I32 nested_if_else() {
+    if (outer) {
+        if (inner) {
+            return 1;
+        } else {
+            return 2;
+        }
+    } else {
+        return 3;
+    }
+    return 0;
+}
