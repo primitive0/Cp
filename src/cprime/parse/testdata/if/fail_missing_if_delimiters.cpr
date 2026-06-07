@@ -1,0 +1,38 @@
+fn I32 missing_then_block() {
+    if (1)
+        return 1;
+    return 0;
+}
+
+fn I32 missing_then_block_close_brace() {
+    if (1) {
+        return 1;
+}
+
+fn I32 missing_condition() {
+    if () {
+        return 1;
+    }
+    return 0;
+}
+
+fn I32 missing_condition_open_paren() {
+    if 1) {
+        return 1;
+    }
+    return 0;
+}
+
+fn I32 missing_condition_close_paren() {
+    if (1 {
+        return 1;
+    }
+    return 0;
+}
+
+fn I32 bad_condition_expression() {
+    if (1 +) {
+        return 1;
+    }
+    return 0;
+}
